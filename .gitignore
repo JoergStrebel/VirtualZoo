@@ -5,3 +5,5 @@ target/
 .factorypath
 .project
 .settings
+*.iml
+.idea/
