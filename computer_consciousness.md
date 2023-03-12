@@ -59,30 +59,49 @@ The research questions are:
 - what kind of parametrization and pre-defined internal state is needed a-priori for a later successful mapping of internal concepts and external environment?
 
 Hypotheses:
-- the simulated organism develops a conceptualization consistent with the entities in the environment
+- the simulated organism develops various conceptualizations consistent with the entities in the environment
 - the learned concepts are commensurate with the complexity of the environment
 
 Assumptions
 - all learning must be data-driven; the simulated organism starts out with as little internal state and capabilities as possible.
+- all learning will be based on feedback and will be online (= reinforcement learning).
 - there will be no limit to the complexity of its internal representations, i. e. the organism can keep on accumulating perceptual data and can build ever more complex abstractions.
 - the lifetime of one organism is not limited, hence there will be no genetics and no simulation of a biological evolution.
 
 The research approach is based on well-designed, quantitative experiments that are conducted in a simulated environment with clear starting conditions; they subject the simulated organism to a specific environment in which it can freely make decisions (see http://www.janrecker.com/quantitative-research-in-information-systems/). In this setting, the environment acts as a parameter to the experiments, the conceptualization of the organism acts as a dependent variable and the decisions and actions of the organism as an independent variable.
 
+The research approach is a phased one: both the complexity of the starting conditions and the internal complexity of the agent are increased step-by-step. In a first phase, a simple agent will try to survive in a simple environment. In a later phase, a more complex agent will be put in a more complex environment. (Organism complexity is here relating to more complex sensory input and more complex poses and movements.)
 
 
-### Organism design
+### Phase-one organism design
 
-I would like to design a simulated organism that learns to survive in a simulated environment without being told anything about the environment. The organism has only very limited capabilities:
-- Actors:
+#### Physical design
+I would like to design a simulated organism that learns to survive in a simulated environment without being told anything about the environment. 
+
+The physical configuration of the simulated organism will include the following variables:
+* Orientation: the organism has a sense of heading - its body is not perfectly symmetrical, but it has a clear shape, that points the organism in a specific direction. It can move back and forth in this direction. If it needs to choose another heading, it needs to turn its body (like a turtle).
+
+
+The organism has only very limited capabilities:
+- Actions:
   - Locomotion: it knows how to move around (i.e. operate its legs)
   - Energy intake: it knows how to eat
   - Communication: it can send and receive messages into the immediate surroundings. A protocol / language / format etc. of those messages will not be predefined.
 - Sensors:
   - Visual perception: it knows how to perceive its environment (with realistic physical limitations)
   - Timer: it has a feeling of the passage of time, although only in a sense of the time passed since an event (with certain inaccuracy). It has no pre-defined concept of an absolute time metric.
-  - Pressure: it can sense force vectors that are applied to its body (also important for collision detection) 
 
+The internal state of the simulated organism will include the following variables:
+
+* internal body state: 
+  * energy level
+  * overall assessment of the situation (am I in danger? is this a pleasant situation?)
+* knowledge store (generic memory function)
+* utility / objective function: what are needs and preferences of the simulated organism
+
+
+
+#### Cognitive design
 I don't want to model any other specific behavior or capability; I would like to let it develop those capabilities by itself. It knows how to walk, but it does not know where to go. It knows how to eat, but it does not know what is good and bad nutrition. It has a sense of direction, but it does not know any compass, cardinal points, degree of rotation or any other abstraction. It will only orient itself based on its perception. It knows how to sense the environment, but it has no given interpretation of the data (it cannot see / recognize).
 
 All higher-value intellectual capabilities need to be learned. It has a generic reinforcement learning algorithm and it has function modules for specific tasks, i.e. planning, navigation, etc. The reward function models the organisms well-being and energy level.
@@ -96,22 +115,15 @@ The legs can receive commands that control them, so the challenge is to learn a 
 
 The organism does not know where it is in absolute terms; it has no built-in GPS that would supply it with world coordinates. It does not even have dead reckoning, i.e. it does not count its steps or track movements via inertial sensors. The organism can only tell its location by looking at its surrounding.
 
-The internal state of the simulated organism will include the following variables:
-
-* internal body state: 
-  * energy level
-  * overall assessment of the situation (am I in danger? is this a pleasant situation?)
-* knowledge store (generic memory function)
-* utility / objective function: what are needs and preferences of the simulated organism
- 
+The following design principles should be followed:
+- Associativity: seeing is recognizing
+- Asynchrony: internal processes operate temporally independently
+- Distribution: cognitive functions are executed in different centers or areas.  Cognitive functions are realized as ensembles of experts, which need to align to reach the best result. One cognitive function, but several possible implementations
+- Parallelism: there is more than one execution unit for cognitive operations
 
 
-### The simulated world (environment)
+### The simulated world - phase-one environment
 The world is a 2D environment with a rectangular grid structure for internal computations (the grid coordinates are not revealed to the organism). The world is a plain, that consists of ground and small patches of edible food, which are visible to the organism.
-
-Day-night rhythm 
-
-Predators
 
 Food which can be poisonous or edible
 
@@ -127,6 +139,18 @@ A lot of needed concepts are still TODO.
 Modern large language models (e.g. ChatGPT) have a very good command of natural language, but they are only grounded in reality as much as their symbolic (textual) input data is grounded there. 
 
 In my opinion, a different approach is needed for an AI that is truly embedded in our human reality. As our engineering knowledge is not sophisticated enough to directly program it, our best hope is to expose a generic organism  with learning capabilities to the world and hope that it learns to survive there, and thereby becoming smart (i.e. it will develop concepts that can be mapped to concepts used by humans and it will make use of these concepts to decide in its best interest).
+
+
+### Appendix
+#### Ideas for later phases
+World simulation:
+- Day-night rhythm 
+- Predators
+
+Organism:
+  - Pressure: it can sense force vectors that are applied to its body (also important for collision detection) 
+
+
 
 
 
