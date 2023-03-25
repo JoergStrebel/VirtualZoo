@@ -25,3 +25,6 @@ isExecutable=true
 
 [Project]
 VersionControlSupport=kdevgit
+
+[SourceFileTemplates]
+LastUsedTemplate=/home/jstrebel/.local/share/kdevfiletemplates/template_descriptions/cpp_cpputest.desktop
