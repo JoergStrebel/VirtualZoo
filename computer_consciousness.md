@@ -65,6 +65,7 @@ Hypotheses:
 Assumptions
 - all learning must be data-driven; the simulated organism starts out with as little internal state and capabilities as possible.
 - all learning will be based on feedback and will be online (= reinforcement learning).
+- all learned models must be human-inspectable and white-box models. The actions of the agent must be explainable in terms of its learned models.
 - there will be no limit to the complexity of its internal representations, i. e. the organism can keep on accumulating perceptual data and can build ever more complex abstractions.
 - the lifetime of one organism is not limited, hence there will be no genetics and no simulation of a biological evolution.
 
@@ -118,7 +119,7 @@ The organism does not know where it is in absolute terms; it has no built-in GPS
 The following design principles should be followed:
 - Associativity: seeing is recognizing
 - Asynchrony: internal processes operate temporally independently
-- Distribution: cognitive functions are executed in different centers or areas.  Cognitive functions are realized as ensembles of experts, which need to align to reach the best result. One cognitive function, but several possible implementations
+- Distribution: cognitive functions are executed in different centers or areas.  Cognitive functions are realized as ensembles of experts, which need to align to reach the best result. One cognitive function, but several possible implementations. Explainable models are a must.
 - Parallelism: there is more than one execution unit for cognitive operations
 
 

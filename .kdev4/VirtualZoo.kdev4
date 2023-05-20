@@ -1,6 +1,11 @@
 [Buildset]
 BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x14\x00V\x00i\x00r\x00t\x00u\x00a\x00l\x00Z\x00o\x00o)
 
+[Cppcheck]
+checkPortability=true
+checkStyle=true
+checkUnusedFunction=true
+
 [Launch]
 Launch Configurations=Launch Configuration 0
 
@@ -27,4 +32,13 @@ isExecutable=true
 VersionControlSupport=kdevgit
 
 [SourceFileTemplates]
-LastUsedTemplate=/home/jstrebel/.local/share/kdevfiletemplates/template_descriptions/cpp_cpputest.desktop
+LastUsedTemplate=/home/jstrebel/.local/share/kdevfiletemplates/template_descriptions/cpp_basic.desktop
+
+[SourceFormatter]
+text/x-c++hdr=kdevcustomscript||GNU_indent_GNU
+text/x-c++src=kdevcustomscript||GNU_indent_GNU
+text/x-chdr=kdevcustomscript||GNU_indent_GNU
+text/x-csharp=kdevcustomscript||GNU_indent_GNU
+text/x-csrc=kdevcustomscript||GNU_indent_GNU
+text/x-java=kdevcustomscript||GNU_indent_GNU
+text/x-objcsrc=kdevcustomscript||GNU_indent_GNU

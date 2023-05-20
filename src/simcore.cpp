@@ -1,6 +1,10 @@
 #include <iostream>
+#include "world.h"
 
-int main() {
-  std::cout << "Hello World!";
-  return 0;
+int main() {  
+    
+    World myWorld;
+    
+    std::cout << "Hello World!";
+    return 0;
 }

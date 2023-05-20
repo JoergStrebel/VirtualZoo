@@ -9,6 +9,12 @@
  */
 class Organism
 {
+    const int MAXENERGY=100;
+    int energy;
+    float risklevel;    
+    
+    void eat();
+    
 };
 
 #endif // ORGANISM_H
