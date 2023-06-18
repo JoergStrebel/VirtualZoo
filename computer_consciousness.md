@@ -47,7 +47,7 @@ The idea is to "grow" intelligence by placing a simulated organism in a simulate
 
 So far, AI research has built systems that are intelligent in a narrow domain, for a single task. If I was an engineer that wanted to build an IT system, that's the right approach. If I want to build a generally-intelligent organism, that approach will probably not succeed.
 
-On this way, the organism needs to solve numerous challenges like navigating the world, finding food, locating and avoid dangers etc. All these tasks happen under constraints, like available energy, knowledge, perception, environment. So, to build such an organism, we need all kinds of clever algorithms, but they all serve a unifying goal and a purpose. 
+On this way, the organism needs to solve numerous challenges like navigating the world, finding food, recognizing and avoid dangers etc. All these tasks happen under constraints, like available energy, knowledge, perception, environment. So, to build such an organism, we need all kinds of clever algorithms, but they all serve a unifying goal and a purpose. 
 
 ### Research approach and design
 I am to build a virtual environment in which I can place various organisms that have the ability to explore, learn and develop. 
@@ -134,6 +134,15 @@ The environment not only contains one but many organisms.
 
 A lot of needed concepts are still TODO.
 
+### Open questions
+As a phase-one organism is a pretty simple one with pretty simple goals, the question is whether it needs to learn any higher-value intellectual capabilities at all. If you look at simple biological organisms like honey bees, they do very well without abstract reasoning or conscious cognitive abilities. 
+
+If I just assume a simple behavioural model like e.g. SOR (https://de.wikipedia.org/wiki/Reiz-Organismus-Reaktions-Modell), it might be enough and there would be little need to learn any abstract concepts at all. The organism just needs to learn a good policy that maps the sensory stimuli to the bodily actions. 
+
+Decision-making is entirely possible without abstract concepts and symbolic reasoning. And so is (social) learning, remembering 
+
+
+So the question is - how complex must the phase-one organism be? It should be complex enough to need concept formation, or else I won't learn much towards my research goal. 
 
 
 ## Conclusion

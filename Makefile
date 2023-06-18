@@ -10,9 +10,9 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 #CFLAGS := -g -Wall -Wextra -W -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter \
     -Wno-unused-function -Wno-sign-conversion -fsanitize=undefined -D_GNU_SOURCE -pedantic-errors
 CFLAGS := -g -Wall -Wextra -W -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter \
-    -Wno-unused-function -Wno-sign-conversion -pedantic-errors
+    -Wno-unused-function -Wno-sign-conversion -pedantic-errors `sdl2-config --cflags`
 
-LIB := -pthread -L lib
+LIB := -pthread -L lib `sdl2-config --libs` -lSDL2_image
 INC := -I src
 
 $(TARGET): $(OBJECTS)
