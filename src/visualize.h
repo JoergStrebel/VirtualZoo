@@ -23,7 +23,7 @@ public:
     //load media ressources
     virtual bool load_media() = 0;
     
-    //draw the scene
+    //draw the whole scene
     virtual bool draw() = 0;
 
     /**

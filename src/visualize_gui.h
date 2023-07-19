@@ -37,15 +37,34 @@ private:
     //The window we'll be rendering to
     SDL_Window* gWindow = NULL;
     
-    //The surface contained by the window
-    SDL_Surface* gScreenSurface = NULL;
 
-    //SDL_Renderer* renderer;
-    //Current displayed PNG image
-    SDL_Surface* gPNGSurface = NULL;
-    
-    SDL_Surface* loadSurface( std::string path );
-    
+    //Screen dimension constants
+    const int SCREEN_WIDTH = 640;
+    const int SCREEN_HEIGHT = 480;
+
+    SDL_Renderer *renderer;
+    std::string windowtitle = "VirtualZoo World View";
+
+    struct color {
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+    };
+
+    struct W_Image {
+	int width, height;
+	int frames;				/* nviews for ships */
+	char *filename;			/* filename without .xpm/.xbm extension*/
+	SDL_Texture *texture;	/* ptr to SDL texture */
+    };
+
+    SDL_Texture* loadTexture( std::string path );
+    void drawpoint(unsigned int x, unsigned int y, struct color color);
+    void clearscreen(void);
+    void updatedisplay(void);
+    void drawimage(int x, int y, int frame, struct W_Image *image);
+    void drawrect(int x, int y, int w, int h, struct  color color);
+
 };
 
 #endif // VISUALIZE_H
