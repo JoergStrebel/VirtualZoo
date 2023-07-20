@@ -1,0 +1,6 @@
+- Den Welt-Zustand an die Visualisierung geben, so dass die Visualisierung aktualisiert werden kann
+- Skalierung abstimmen zwischen der Visualisierung und der Simulation
+- gemeinsame Definitionen zwischen Visualisierung und Welt-Zustand einführen
+- Visualisierung und Simulation zeitmäßig entkoppeln: Welt-Zustand nur alle x Ticks zeichnen lassen
+
+

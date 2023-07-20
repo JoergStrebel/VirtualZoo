@@ -24,7 +24,10 @@ public:
     virtual bool load_media() = 0;
     
     //draw the whole scene
-    virtual bool draw() = 0;
+    virtual void draw() = 0;
+
+    //process exit events - exit happens when visualization is stopped
+    virtual bool check_exit() = 0;
 
     /**
      * Destructor

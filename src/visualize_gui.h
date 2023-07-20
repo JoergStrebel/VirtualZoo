@@ -26,7 +26,10 @@ public:
     bool load_media() override;
     
     //draw the scene
-    bool draw() override;
+    void draw() override;
+
+    //check SDL events
+    bool check_exit() override;
 
     /**
      * Destructor
@@ -53,10 +56,12 @@ private:
 
     struct W_Image {
 	int width, height;
-	int frames;				/* nviews for ships */
-	char *filename;			/* filename without .xpm/.xbm extension*/
+	int framecount;
+	std::string filename;
 	SDL_Texture *texture;	/* ptr to SDL texture */
     };
+
+    struct W_Image turtle;
 
     SDL_Texture* loadTexture( std::string path );
     void drawpoint(unsigned int x, unsigned int y, struct color color);

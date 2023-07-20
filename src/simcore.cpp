@@ -28,13 +28,13 @@ int main(int argc, char **argv)
             return 1;
     }
     
-    if( !myVis->draw() )
+    //main simulation loop - everything happens here
+    bool quit = false;
+    while( quit == false )
     {
-            std::cerr<< "Failed to draw texture!\n";
-            return 1;
+        quit = myVis->check_exit();
+        myVis->draw();
     }
-    
-    //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    
-    return 0; //implicit conversion
+
+    return 0;
 }

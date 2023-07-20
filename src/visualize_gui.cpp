@@ -18,6 +18,12 @@ visualize_gui::~visualize_gui()
 {
    //Free loaded image
 
+    //destroy textures
+    SDL_DestroyTexture( turtle.texture );
+    turtle.texture = NULL;
+
+    SDL_DestroyRenderer( renderer );
+
 	//Destroy window
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
@@ -30,7 +36,7 @@ visualize_gui::~visualize_gui()
 
 bool visualize_gui::load_media()
 {    
-    std::string path = "/home/jstrebel/devel/VirtualZoo/resource/loaded.png"; 
+    std::string path = "/home/jstrebel/devel/VirtualZoo/resource/beetle.png";
     bool success = true;
     
     //Initialize PNG loading
@@ -42,12 +48,23 @@ bool visualize_gui::load_media()
     }
     
 	//Load PNG texture
-	SDL_Texture*  gPNGSurface = loadTexture( path );
-	if( gPNGSurface == NULL )
+	SDL_Texture*  gPNGTexture = loadTexture( path );
+	if( gPNGTexture == NULL )
 	{
 		SDL_Log( "Failed to load PNG image!\n" );
 		success = false;
 	}
+
+	turtle.texture = gPNGTexture;
+    turtle.framecount = 1;
+    turtle.height = 500;
+    turtle.width = 600;
+    turtle.filename = path;
+
+    Uint32 format;
+    int access, w, h;
+    SDL_QueryTexture(gPNGTexture, &format, &access, &w, &h);
+    SDL_Log( "Texture width %i, heigth %i\n", w, h);
 
 	return success;
 }
@@ -67,28 +84,27 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 }
 
 
-bool visualize_gui::draw()
+void visualize_gui::draw()
 {
-    SDL_Event e; 
-    bool quit = false; 
-    SDL_BlitSurface( gPNGSurface, NULL, gScreenSurface, NULL );
-    //Update the surface
-    SDL_UpdateWindowSurface( gWindow );
-    
-    while( quit == false )
-    { 
-        while( SDL_PollEvent( &e ) )
-        { 
-            if( e.type == SDL_QUIT ) quit = true; 
-            
-        }         
-        //TODO: if there is not SDL_PollEvent, nothing gets drawn?? Why?
-        //A: it seems, we need to call both commands continuously for them to work
-        SDL_BlitSurface( gPNGSurface, NULL, gScreenSurface, NULL );
-        //Update the surface
-        SDL_UpdateWindowSurface( gWindow );
+        this->clearscreen();
+        this->drawimage(10, 10, 0, &turtle);
+        this->updatedisplay();
+}
+
+/*
+ *
+ */
+bool visualize_gui::check_exit()
+{
+    SDL_Event e;
+    bool quit = false;
+
+    while( SDL_PollEvent( &e ) )
+    {
+        if( e.type == SDL_QUIT ) quit = true;
     }
-    return true;
+
+    return quit;
 }
 
 
@@ -96,7 +112,7 @@ bool visualize_gui::init()
 {
 	Uint32 flags;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
         	fprintf(stderr, "Couldn't init video: %s\n", SDL_GetError());
         	exit(1);
     	}
@@ -154,36 +170,34 @@ void visualize_gui::updatedisplay(void)
 
 /**
  * It is assumed that the frames are stacked, i.e. the different frames can be addressed using the height parameter
+ * /parameter frame : index of frame to be drawn; 0-based
  */
 void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image)
 {
 	int height, width;
 	SDL_Rect srcrect, dstrect;
 
-	if (frame < 0) {
+	if (frame == 0) {
 		/* Draw the whole thing regardless of frames. */
-		height = image->height * image->frames;
-		frame = 0;
+		height = image->height * image->framecount;
 	} else {
 		/* Draw the given frame. */
 		height = image->height;
-		frame = frame % image->frames;
+		frame = frame % image->framecount;
 	}
 	width = image->width;
 
 	dstrect.x = x;
 	dstrect.y = y;
-	dstrect.w = width;
-	dstrect.h = height;
+	dstrect.w = width/4;
+	dstrect.h = height/4;
 
 	srcrect.x = 0;
 	srcrect.y = height * frame;
 	srcrect.w = width;
 	srcrect.h = height;
 
-
-	SDL_RenderCopy(renderer, image->surface, &srcrect, &dstrect);
-
+	SDL_RenderCopy(renderer, image->texture, &srcrect, &dstrect);
 }
 
 
