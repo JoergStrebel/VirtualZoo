@@ -6,7 +6,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <string>
-
+#include "world.h"
 
     
 visualize_gui::visualize_gui()
@@ -19,8 +19,8 @@ visualize_gui::~visualize_gui()
    //Free loaded image
 
     //destroy textures
-    SDL_DestroyTexture( turtle.texture );
-    turtle.texture = NULL;
+    SDL_DestroyTexture( imgBeetle.texture );
+    imgBeetle.texture = NULL;
 
     SDL_DestroyRenderer( renderer );
 
@@ -34,9 +34,9 @@ visualize_gui::~visualize_gui()
 }
 
 
-bool visualize_gui::load_media()
+bool visualize_gui::load_media(appconfig* values)
 {    
-    std::string path = "/home/jstrebel/devel/VirtualZoo/resource/beetle.png";
+    std::string path = values->get("beetle");
     bool success = true;
     
     //Initialize PNG loading
@@ -55,20 +55,21 @@ bool visualize_gui::load_media()
 		success = false;
 	}
 
-	turtle.texture = gPNGTexture;
-    turtle.framecount = 1;
-    turtle.height = 500;
-    turtle.width = 600;
-    turtle.filename = path;
-
-    Uint32 format;
-    int access, w, h;
-    SDL_QueryTexture(gPNGTexture, &format, &access, &w, &h);
-    SDL_Log( "Texture width %i, heigth %i\n", w, h);
+	imgBeetle.texture = gPNGTexture;
+    imgBeetle.framecount = 1;
+    imgBeetle.height = 500;
+    imgBeetle.width = 600;
+    imgBeetle.filename = path;
 
 	return success;
 }
 
+void visualize_gui::getTextureDetails(SDL_Texture* texture){
+     Uint32 format;
+    int access, w, h;
+    SDL_QueryTexture(texture, &format, &access, &w, &h);
+    SDL_Log( "Texture width %i, heigth %i\n", w, h);
+}
 
 SDL_Texture* visualize_gui::loadTexture( std::string path )
 {
@@ -84,10 +85,10 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 }
 
 
-void visualize_gui::draw()
+void visualize_gui::draw(World myWorld)
 {
         this->clearscreen();
-        this->drawimage(10, 10, 0, &turtle);
+        this->drawimage(myWorld.myOrg->x, myWorld.myOrg->y, 0, &imgBeetle);
         this->updatedisplay();
 }
 

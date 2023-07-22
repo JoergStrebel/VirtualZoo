@@ -6,12 +6,10 @@
 
 World::World()
 {
-    Locations allobjects;
+    myOrg = new Organism("beetle");
 }
 
-
-bool World::operator==(const World& other) const
-{
-    return true;
+void World::run_world(){
+   myOrg->act();
 }
 

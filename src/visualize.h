@@ -4,6 +4,8 @@
 #ifndef VISUALIZE_H
 #define VISUALIZE_H
 #include <string>
+#include "appconfig.h"
+#include "world.h"
 
 
 /**
@@ -21,10 +23,10 @@ public:
     virtual bool init() = 0;
     
     //load media ressources
-    virtual bool load_media() = 0;
+    virtual bool load_media(appconfig* values) = 0;
     
     //draw the whole scene
-    virtual void draw() = 0;
+    virtual void draw(World myWorld) = 0;
 
     //process exit events - exit happens when visualization is stopped
     virtual bool check_exit() = 0;

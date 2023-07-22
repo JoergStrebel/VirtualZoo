@@ -6,6 +6,8 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include "visualize.h"
+#include "appconfig.h"
+#include "world.h"
 
 
 /**
@@ -23,10 +25,10 @@ public:
     bool init() override;
     
     //load media ressources
-    bool load_media() override;
+    bool load_media(appconfig* values) override;
     
     //draw the scene
-    void draw() override;
+    void draw(World myWorld) override;
 
     //check SDL events
     bool check_exit() override;
@@ -61,7 +63,7 @@ private:
 	SDL_Texture *texture;	/* ptr to SDL texture */
     };
 
-    struct W_Image turtle;
+    struct W_Image imgBeetle;
 
     SDL_Texture* loadTexture( std::string path );
     void drawpoint(unsigned int x, unsigned int y, struct color color);
@@ -69,6 +71,7 @@ private:
     void updatedisplay(void);
     void drawimage(int x, int y, int frame, struct W_Image *image);
     void drawrect(int x, int y, int w, int h, struct  color color);
+    void getTextureDetails(SDL_Texture* texture);
 
 };
 
