@@ -3,7 +3,7 @@
 
 #include "organism.h"
 #include <iostream>
-#include <math.h>
+#include <algorithm>
 #include "constants.h"
 
 Organism::Organism(std::string id){

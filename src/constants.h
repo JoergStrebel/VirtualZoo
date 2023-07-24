@@ -9,8 +9,8 @@ namespace Constants
     enum Vegetation_Constants {TREE = 1, PLANT=2, EMPTY = 3};
     const int MAXYIELD=100;
     
-    const int MINX=1;
-    const int MINY=1;
+    const int MINX=0;
+    const int MINY=0;
     const int MAXX=640;
     const int MAXY=480;
 

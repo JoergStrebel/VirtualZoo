@@ -23,10 +23,10 @@ public:
     virtual bool init() = 0;
     
     //load media ressources
-    virtual bool load_media(appconfig* values) = 0;
+    virtual bool load_media(const appconfig& values) = 0;
     
     //draw the whole scene
-    virtual void draw(World myWorld) = 0;
+    virtual void draw(const World& myWorld) = 0;
 
     //process exit events - exit happens when visualization is stopped
     virtual bool check_exit() = 0;
@@ -37,6 +37,7 @@ public:
     virtual ~visualize();
 
 private:
+
     
 };
 

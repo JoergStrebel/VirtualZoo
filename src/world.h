@@ -21,7 +21,7 @@ public:
     void run_world();
 
     Locations allobjects;
-    Organism* myOrg;
+    Organism myOrg{"beetle"};
     
 private:
 

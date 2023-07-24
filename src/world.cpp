@@ -6,10 +6,10 @@
 
 World::World()
 {
-    myOrg = new Organism("beetle");
+
 }
 
 void World::run_world(){
-   myOrg->act();
+   myOrg.act();
 }
 

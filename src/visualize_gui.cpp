@@ -6,6 +6,8 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <utility>
 #include "world.h"
 
     
@@ -19,8 +21,8 @@ visualize_gui::~visualize_gui()
    //Free loaded image
 
     //destroy textures
-    SDL_DestroyTexture( imgBeetle.texture );
-    imgBeetle.texture = NULL;
+    SDL_DestroyTexture( imgrepo.front()->texture );
+    imgrepo.pop_back();
 
     SDL_DestroyRenderer( renderer );
 
@@ -34,10 +36,12 @@ visualize_gui::~visualize_gui()
 }
 
 
-bool visualize_gui::load_media(appconfig* values)
+bool visualize_gui::load_media(const appconfig& values)
 {    
-    std::string path = values->get("beetle");
+    const std::string key = "beetle";
+    const std::string path = values.get(key);
     bool success = true;
+    struct W_Image * tmpimg;
     
     //Initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
@@ -55,20 +59,28 @@ bool visualize_gui::load_media(appconfig* values)
 		success = false;
 	}
 
-	imgBeetle.texture = gPNGTexture;
-    imgBeetle.framecount = 1;
-    imgBeetle.height = 500;
-    imgBeetle.width = 600;
-    imgBeetle.filename = path;
+    //store it
+    tmpimg = new struct W_Image();
+	tmpimg->texture = gPNGTexture;
+    tmpimg->framecount = 1;
+
+    const auto txvalue = this->getTextureDetails(gPNGTexture);
+    tmpimg->height = txvalue.second;
+    tmpimg->width = txvalue.first;
+    tmpimg->filename = path;
+    tmpimg->identifier = key;
+
+    imgrepo.push_back(tmpimg);
 
 	return success;
 }
 
-void visualize_gui::getTextureDetails(SDL_Texture* texture){
+std::pair<int,int> visualize_gui::getTextureDetails(SDL_Texture* texture){
      Uint32 format;
     int access, w, h;
     SDL_QueryTexture(texture, &format, &access, &w, &h);
     SDL_Log( "Texture width %i, heigth %i\n", w, h);
+    return std::pair<int,int>{w,h};
 }
 
 SDL_Texture* visualize_gui::loadTexture( std::string path )
@@ -85,10 +97,10 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 }
 
 
-void visualize_gui::draw(World myWorld)
+void visualize_gui::draw(const World& myWorld)
 {
         this->clearscreen();
-        this->drawimage(myWorld.myOrg->x, myWorld.myOrg->y, 0, &imgBeetle);
+        this->drawimage(myWorld.myOrg.x, myWorld.myOrg.y, 0, imgrepo.front());
         this->updatedisplay();
 }
 

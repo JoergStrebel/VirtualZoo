@@ -17,8 +17,8 @@ appconfig::~appconfig()
 {
 }
 
-std::string appconfig::get(std::string key){
-    return imagepaths[key];
+std::string appconfig::get(std::string key) const {
+    return imagepaths.at(key);
 }
 
 void appconfig::put(std::string key, std::string value){

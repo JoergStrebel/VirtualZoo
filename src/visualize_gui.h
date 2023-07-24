@@ -5,9 +5,11 @@
 #define VISUALIZE_GUI_H
 #include <SDL2/SDL.h>
 #include <string>
+#include <vector>
 #include "visualize.h"
 #include "appconfig.h"
 #include "world.h"
+#include <utility>
 
 
 /**
@@ -25,10 +27,10 @@ public:
     bool init() override;
     
     //load media ressources
-    bool load_media(appconfig* values) override;
+    bool load_media(const appconfig& values) override;
     
     //draw the scene
-    void draw(World myWorld) override;
+    void draw(const World& myWorld) override;
 
     //check SDL events
     bool check_exit() override;
@@ -41,7 +43,6 @@ public:
 private:
     //The window we'll be rendering to
     SDL_Window* gWindow = NULL;
-    
 
     //Screen dimension constants
     const int SCREEN_WIDTH = 640;
@@ -56,14 +57,16 @@ private:
 	Uint8 b;
     };
 
+
     struct W_Image {
-	int width, height;
+	std::string identifier;
+    int width, height;
 	int framecount;
 	std::string filename;
 	SDL_Texture *texture;	/* ptr to SDL texture */
     };
 
-    struct W_Image imgBeetle;
+    std::vector<struct W_Image *> imgrepo;
 
     SDL_Texture* loadTexture( std::string path );
     void drawpoint(unsigned int x, unsigned int y, struct color color);
@@ -71,7 +74,7 @@ private:
     void updatedisplay(void);
     void drawimage(int x, int y, int frame, struct W_Image *image);
     void drawrect(int x, int y, int w, int h, struct  color color);
-    void getTextureDetails(SDL_Texture* texture);
+    std::pair<int,int>  getTextureDetails(SDL_Texture* texture);
 
 };
 

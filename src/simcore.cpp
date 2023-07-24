@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     }
     
     //Load media
-    if( !myVis->load_media(&simconfig) )
+    if( !myVis->load_media(simconfig) )
     {
             std::cerr<< "Failed to load media!\n";
             return 1;
