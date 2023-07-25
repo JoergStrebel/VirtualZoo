@@ -5,6 +5,7 @@
 #define LOCATION_H
 
 #include <string>
+#include "sim_util.h"
 
 /**
  * A location defines a place for an object or a patch of land with certain properties (extent ...). 
@@ -21,6 +22,7 @@ public:
     int availableyield;
     Location(int px, int py, bool transp, int veg);
     std::string toString();
+    sim_util rndnum;
     
 };
 

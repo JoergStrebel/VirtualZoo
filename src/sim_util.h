@@ -25,7 +25,7 @@ public:
 
 private:
     std::random_device r;
-    std::default_random_engine e1{r()};
+    std::default_random_engine e1;
 
 };
 

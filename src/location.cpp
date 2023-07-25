@@ -8,9 +8,6 @@
 
 Location::Location(int px, int py, bool transp, int veg) 
     {
-
-        sim_util rndnum;
-
         maxyield  = rndnum.randomint(1, Constants::MAXYIELD);
         availableyield = maxyield;
         

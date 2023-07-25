@@ -4,6 +4,7 @@
 #ifndef ORGANISM_H
 #define ORGANISM_H
 #include <string>
+#include "sim_util.h"
 
 /**
  * @todo write docs
@@ -28,6 +29,7 @@ private:
     void eat();
     void turn(); //turn one unit based on the current heading
     void move(); //move one unit in the current heading
+    sim_util rndnums;
     
 };
 

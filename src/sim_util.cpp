@@ -4,7 +4,7 @@
 #include "sim_util.h"
 #include <random>
 
-sim_util::sim_util()
+sim_util::sim_util() : e1(r())
 {
 
 }

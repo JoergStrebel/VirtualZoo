@@ -14,7 +14,7 @@
 class Locations
 {
 private:
-    std::vector<Location> allobjects;
+    std::vector<Location*> allobjects;
     
 public:
     /**

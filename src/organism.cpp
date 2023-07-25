@@ -31,7 +31,6 @@ void Organism::turn() {
 }
 
 void Organism::move() {
-    sim_util rndnums;
     int movex = rndnums.randomint(-3,3);
     int movey = rndnums.randomint(-3,3);
 
