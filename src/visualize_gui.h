@@ -10,6 +10,8 @@
 #include "appconfig.h"
 #include "world.h"
 #include <utility>
+#include <cmath>
+#include "constants.h"
 
 
 /**
@@ -44,9 +46,15 @@ private:
     //The window we'll be rendering to
     SDL_Window* gWindow = NULL;
 
-    //Screen dimension constants
+    //Screen dimension constants - we'll always have square screens
     const int SCREEN_WIDTH = 640;
-    const int SCREEN_HEIGHT = 480;
+    const int SCREEN_HEIGHT = SCREEN_WIDTH;
+
+    //scaling factors for transforming World coordinates to GUI coordinates
+    const float SCALE_WIDTH = float(SCREEN_WIDTH)/float(Constants::MAXX);
+
+    //fixed image size
+    const int ICONSIZE = (int)std::round(float(Constants::ENTITYSIZE)*SCALE_WIDTH);
 
     SDL_Renderer *renderer;
     std::string windowtitle = "VirtualZoo World View";

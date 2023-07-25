@@ -12,8 +12,9 @@ namespace Constants
     const int MINX=0;
     const int MINY=0;
     const int MAXX=640;
-    const int MAXY=480;
-
+    const int MAXY=MAXX; //we'll always have square worlds
+    const int ENTITIESPERX = 20;
+    const int ENTITYSIZE = MAXX/ENTITIESPERX; //we assume square entites in the simulated world
 }
 #endif
 

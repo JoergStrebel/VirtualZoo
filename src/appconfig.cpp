@@ -10,7 +10,7 @@ appconfig::appconfig()
 {
     //some values are hardcoded here (later, we will load them dynamically from a file)
     //the keys are defined on application level
-    this->put("beetle", "/home/jstrebel/devel/VirtualZoo/resource/beetle.png");
+    this->put("beetle", "/home/jstrebel/devel/VirtualZoo/resource/beetle_square.png");
 }
 
 appconfig::~appconfig()

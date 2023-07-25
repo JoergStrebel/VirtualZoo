@@ -3,15 +3,15 @@
 
 #include "location.h"
 #include "constants.h"
-#include <random>
+#include "sim_util.h"
 
 
 Location::Location(int px, int py, bool transp, int veg) 
     {
-        std::random_device r;
-        std::default_random_engine e1(r());
-        std::uniform_int_distribution<int> uniform_dist(1, Constants::MAXYIELD);
-        maxyield  = uniform_dist(e1);         
+
+        sim_util rndnum;
+
+        maxyield  = rndnum.randomint(1, Constants::MAXYIELD);
         availableyield = maxyield;
         
         xlo = px;

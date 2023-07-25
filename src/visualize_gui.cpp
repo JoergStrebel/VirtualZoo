@@ -9,6 +9,7 @@
 #include <vector>
 #include <utility>
 #include "world.h"
+#include "constants.h"
 
     
 visualize_gui::visualize_gui()
@@ -202,8 +203,8 @@ void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image)
 
 	dstrect.x = x;
 	dstrect.y = y;
-	dstrect.w = width/4;
-	dstrect.h = height/4;
+	dstrect.w = ICONSIZE;
+	dstrect.h = ICONSIZE;
 
 	srcrect.x = 0;
 	srcrect.y = height * frame;

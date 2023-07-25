@@ -1,3 +1,4 @@
+- Konstanten Skalierungsfaktor in visualize_gui ausbauen
 - Schleife bauen in visualize_gui::load_media(...) um alle Bilder zu laden.
 - Schleife bauen in ~visualize_gui um alle Bilder zu löschen.
 - Einführung einer transform() Methode in visualize.h, um die Welt auf die Visualisierung abzubilden.
