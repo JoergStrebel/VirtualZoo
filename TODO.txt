@@ -1,11 +1,13 @@
-- Konstanten Skalierungsfaktor in visualize_gui ausbauen
+- Definition notwendig, wie ein Stimulus aussieht, welche Daten übertragen werden und wie er in C++ modelliert wird.
+- Organismus muss auf die eingegangenen Stimuli reagieren und er muss mit einer kette von stimuli zurecht kommen.
+- Event System und Kollisionserkennung. Kollisionserkennung zwischen Organismus und anderen Objekten in der Welt. Diese Erkennung muss in der Welt stattfinden, NICHT in der Visualierung. Die Visualierung malt nur, ist aber ansonsten "dumm".
+
 - Schleife bauen in visualize_gui::load_media(...) um alle Bilder zu laden.
 - Schleife bauen in ~visualize_gui um alle Bilder zu löschen.
 - Einführung einer transform() Methode in visualize.h, um die Welt auf die Visualisierung abzubilden.
 
 - Den Welt-Zustand an die Visualisierung geben, so dass die Visualisierung aktualisiert werden kann
 - gemeinsame Definitionen zwischen Visualisierung und Welt-Zustand einführen
-- Kollisionserkennung zwischen Organismus und anderen Objekten in der Welt. Diese Erkennung muss in der Welt stattfinden, NICHT in der Visualierung. Die Visualierung malt nur, ist aber ansonsten "dumm".
 - Visualisierung und Simulation zeitmäßig entkoppeln: Welt-Zustand nur alle x Ticks zeichnen lassen
 
 

@@ -6,10 +6,10 @@
 #include <algorithm>
 #include "constants.h"
 #include "sim_util.h"
+#include "stimulus.h"
 
-Organism::Organism(std::string id){
- this->identifier=id;
- this->heading=180.0;
+Organism::Organism(const std::string id): identifier(id) {
+ this->heading=0.0;
  this->x = 10;
  this->y = 10;
 }
@@ -26,6 +26,12 @@ void Organism::act() {
     this->move();
 }
 
+void Organism::physical_stimulus(const stimulus* st){
+    std::cout << "Received stimulus %s", st->get_id();
+    allstimuli.push_back(st);
+}
+
+
 void Organism::turn() {
 
 }
@@ -34,8 +40,4 @@ void Organism::move() {
     int movex = rndnums.randomint(-3,3);
     int movey = rndnums.randomint(-3,3);
 
-    this->y=std::min(this->y+movey, Constants::MAXY-Constants::ENTITYSIZE);
-    this->x=std::min(this->x+movex, Constants::MAXX-Constants::ENTITYSIZE);
-    this->y=std::max(this->y+movey, 0);
-    this->x=std::max(this->x+movex, 0);
 }

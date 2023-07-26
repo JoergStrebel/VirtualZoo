@@ -24,7 +24,9 @@ public:
     Organism myOrg{"beetle"};
     
 private:
-
+    //checks collisions among objects and between objects and boundary
+    //sends events to the affected objects, so that they can react on.
+    void check_collisions();
 
 };
 
