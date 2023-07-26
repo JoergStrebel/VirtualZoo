@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "constants.h"
 #include "sim_util.h"
-#include "stimulus.h"
+#include "sensor.h"
 
 Organism::Organism(const std::string id): identifier(id) {
  this->heading=0.0;
@@ -26,8 +26,8 @@ void Organism::act() {
     this->move();
 }
 
-void Organism::physical_stimulus(const stimulus* st){
-    std::cout << "Received stimulus %s", st->get_id();
+void Organism::physical_stimulus(const std::string st){
+    std::cout << "Received stimulus %s" << st;
     allstimuli.push_back(st);
 }
 

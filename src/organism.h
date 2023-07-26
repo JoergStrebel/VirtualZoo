@@ -5,7 +5,7 @@
 #define ORGANISM_H
 #include <string>
 #include "sim_util.h"
-#include "stimulus.h"
+#include "sensor.h"
 #include <vector>
 
 /**
@@ -17,7 +17,7 @@ public:
     Organism(const std::string id);
     ~Organism();
     void act();
-    void physical_stimulus(const stimulus* st);
+    void physical_stimulus(const std::string st);
     float heading;
     int x; //coordinate
     int y; //coordinate
@@ -33,7 +33,7 @@ private:
     void turn(); //turn one unit based on the current heading
     void move(); //move one unit in the current heading
     sim_util rndnums;
-    std::vector<const stimulus*> allstimuli;
+    std::vector<std::string> allstimuli;
     
 };
 

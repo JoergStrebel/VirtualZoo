@@ -3,7 +3,7 @@
 
 #include "world.h"
 #include "constants.h"
-#include "stimulus.h"
+#include "sensor.h"
 
 World::World()
 {
@@ -29,7 +29,7 @@ void World::check_collisions(){
         myOrg.y >= Constants::MAXY-Constants::ENTITYSIZE ||
         myOrg.x >= Constants::MAXX-Constants::ENTITYSIZE) {
         //send stimulus to organism
-        stimulus* colldectect = new stimulus("collision",nullptr);
+        std::string colldectect="sensor1";
         myOrg.physical_stimulus(colldectect);
     }
 }

@@ -1,6 +1,6 @@
-- Definition notwendig, wie ein Stimulus aussieht, welche Daten übertragen werden und wie er in C++ modelliert wird.
-- Organismus muss auf die eingegangenen Stimuli reagieren und er muss mit einer kette von stimuli zurecht kommen.
 - Event System und Kollisionserkennung. Kollisionserkennung zwischen Organismus und anderen Objekten in der Welt. Diese Erkennung muss in der Welt stattfinden, NICHT in der Visualierung. Die Visualierung malt nur, ist aber ansonsten "dumm".
+- Organismus muss auf die eingegangenen Stimuli reagieren und er muss mit einer kette von stimuli zurecht kommen.
+- ein Körper  hat Sinneszellen mit einer klaren Reizerfassung un einer klaren Verortung am Körper. Wenn die Sinneszelle feuert, dann weiß das Gehirn, was es mit dem Reiz anfangen soll und wie er weiter zu verabeiten ist.
 
 - Schleife bauen in visualize_gui::load_media(...) um alle Bilder zu laden.
 - Schleife bauen in ~visualize_gui um alle Bilder zu löschen.
