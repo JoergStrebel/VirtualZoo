@@ -21,6 +21,7 @@ public:
     float heading;
     int x; //coordinate
     int y; //coordinate
+    sensor* sensorarray[8];
 
 private:
     const int MAXENERGY=100;
