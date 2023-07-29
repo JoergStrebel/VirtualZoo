@@ -19,6 +19,7 @@ visualize_gui::visualize_gui()
 
 visualize_gui::~visualize_gui()
 {
+    SDL_Log( "GUI Destructor called");
    //Free loaded image
 	SDL_FreeSurface( gPNGSurface );
 	gPNGSurface = NULL;
@@ -30,6 +31,7 @@ visualize_gui::~visualize_gui()
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
+
 }
 
 bool visualize_gui::init()
