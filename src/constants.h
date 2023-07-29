@@ -9,12 +9,12 @@ namespace Constants
     enum Vegetation_Constants {TREE = 1, PLANT=2, EMPTY = 3};
     const int MAXYIELD=100;
     
-    // Our world is a square of 1000x1000 pixel
-    const int MINX=1;
-    const int MINY=1;
-    const int MAXX=1000;
-    const int MAXY=1000;
-
+    const int MINX=0;
+    const int MINY=0;
+    const int MAXX=640;
+    const int MAXY=MAXX; //we'll always have square worlds
+    const int ENTITIESPERX = 20;
+    const int ENTITYSIZE = MAXX/ENTITIESPERX; //we assume square entites in the simulated world
 }
 #endif
 

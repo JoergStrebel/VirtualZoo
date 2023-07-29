@@ -2,8 +2,7 @@
 #include "world.h"
 #include "visualize.h"
 #include "visualize_gui.h"
-#include <chrono>
-#include <thread>
+#include "appconfig.h"
 
 
 int main(int argc, char **argv)
@@ -11,9 +10,10 @@ int main(int argc, char **argv)
     
     World myWorld;
     visualize* myVis;
+    appconfig simconfig;
     
     myVis = new visualize_gui();
-    
+
     //Load media
     if( !myVis->init() )
     {
@@ -22,21 +22,23 @@ int main(int argc, char **argv)
     }
     
     //Load media
-    if( !myVis->load_media() )
+    if( !myVis->load_media(simconfig) )
     {
             std::cerr<< "Failed to load media!\n";
             return 1;
     }
     
-    if( !myVis->draw() )
+    //main simulation loop - everything happens here
+    bool quit = false;
+    while( quit == false )
     {
-            std::cerr<< "Failed to draw texture!\n";
-            return 1;
+        quit = myVis->check_exit();
+        myWorld.run_world();
+        myVis->draw(myWorld);
     }
-    
-    //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     
     delete(myVis);
     
     return 0; //implicit conversion
+
 }

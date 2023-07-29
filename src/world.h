@@ -4,30 +4,29 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include <string>
 #include "locations.h"
-
+#include "organism.h"
 
 /**
  * This class represents the simulated world.
  */
 class World
 {
-private:
-     Locations allobjects;
-
 public:     
      /**
      * Default constructor
      */
     World();
+    void run_world();
+
+    Locations allobjects;
+    Organism myOrg{"beetle"};
     
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
-    bool operator==(const World& other) const;
+private:
+    //checks collisions among objects and between objects and boundary
+    //sends events to the affected objects, so that they can react on.
+    void check_collisions();
 
 };
 

@@ -2,16 +2,35 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "world.h"
-
+#include "constants.h"
+#include "sensor.h"
 
 World::World()
 {
-    Locations allobjects;
+
 }
 
+void World::run_world(){
+    this->check_collisions();
+    myOrg.act();
+}
 
-bool World::operator==(const World& other) const
-{
-    return true;
+void World::check_collisions(){
+
+    //check collision between organism and boundary
+    /*
+    myOrg.y=std::min(myOrg.y, Constants::MAXY-Constants::ENTITYSIZE);
+    myOrg.x=std::min(myOrg.x, Constants::MAXX-Constants::ENTITYSIZE);
+    myOrg.y=std::max(myOrg.y, 0);
+    myOrg.x=std::max(myOrg.x, 0);
+    */
+    if (myOrg.x<=0 ||
+        myOrg.y<=0 ||
+        myOrg.y >= Constants::MAXY-Constants::ENTITYSIZE ||
+        myOrg.x >= Constants::MAXX-Constants::ENTITYSIZE) {
+        //send stimulus to organism
+        std::string colldectect="sensor1";
+        myOrg.physical_stimulus(colldectect);
+    }
 }
 
