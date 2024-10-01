@@ -45,6 +45,7 @@ public:
 private:
     //The window we'll be rendering to
     SDL_Window* gWindow = NULL;
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
 
     //Screen dimension constants - we'll always have square screens
     const int SCREEN_WIDTH = 640;
@@ -80,7 +81,7 @@ private:
     void drawpoint(unsigned int x, unsigned int y, struct color color);
     void clearscreen(void);
     void updatedisplay(void);
-    void drawimage(int x, int y, int frame, struct W_Image *image);
+    void drawimage(int x, int y, int frame, struct W_Image *image, double heading);
     void drawrect(int x, int y, int w, int h, struct  color color);
     std::pair<int,int>  getTextureDetails(SDL_Texture* texture);
 

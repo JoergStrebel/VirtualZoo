@@ -23,15 +23,6 @@ public:
     Locations();
 
     
-    /**
-     * @todo write docs
-     *
-     * @param other TODO
-     * @return TODO
-     */
-    bool operator==(const Locations& other) const;
-
-    
 };
 
 #endif // LOCATIONS_H

@@ -18,9 +18,10 @@ public:
     ~Organism();
     void act();
     void physical_stimulus(const std::string st);
-    float heading;
+    double heading;
     int x; //coordinate
-    int y; //coordinate
+    int y; //coordinate    
+    //TODO: implement the rule of 3 or 5
     sensor* sensorarray[8];
 
 private:
@@ -29,12 +30,17 @@ private:
 
     int energy;
     float risklevel;
+    double stepsize=2.0;
 
     void eat();
-    void turn(); //turn one unit based on the current heading
+    void turn(const int degrees); //turn one unit based on the current heading
     void move(); //move one unit in the current heading
     sim_util rndnums;
     std::vector<std::string> allstimuli;
+    
+    //get direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
+    std::pair<int,int> getStimulusDirection(const std::string identifier);
+    
     
 };
 

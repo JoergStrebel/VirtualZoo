@@ -10,9 +10,3 @@ Locations::Locations()
     allobjects.push_back(new Location(10, 5, false, Constants::Vegetation_Constants::PLANT));
 }
 
-
-bool Locations::operator==(const Locations& other) const
-{
-    return true;
-}
-

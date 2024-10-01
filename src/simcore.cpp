@@ -39,6 +39,6 @@ int main(int argc, char **argv)
     
     delete(myVis);
     
-    return 0; //implicit conversion
+    return 0;
 
 }

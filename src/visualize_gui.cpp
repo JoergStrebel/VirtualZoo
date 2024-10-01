@@ -103,7 +103,12 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 void visualize_gui::draw(const World& myWorld)
 {
         this->clearscreen();
-        this->drawimage(myWorld.myOrg.x, myWorld.myOrg.y, 0, imgrepo.front());
+		
+		//redraw the world
+		
+		//first, draw the organism
+        this->drawimage(myWorld.myOrg.x, myWorld.myOrg.y, 0, imgrepo.front(), myWorld.myOrg.heading);
+		
         this->updatedisplay();
 }
 
@@ -188,7 +193,7 @@ void visualize_gui::updatedisplay(void)
  * It is assumed that the frames are stacked, i.e. the different frames can be addressed using the height parameter
  * /parameter frame : index of frame to be drawn; 0-based
  */
-void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image)
+void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image, double heading)
 {
 	int height, width;
 	SDL_Rect srcrect, dstrect;
@@ -213,7 +218,7 @@ void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image)
 	srcrect.w = width;
 	srcrect.h = height;
 
-	SDL_RenderCopy(renderer, image->texture, &srcrect, &dstrect);
+	SDL_RenderCopyEx(renderer, image->texture, &srcrect, &dstrect, heading, NULL, flip);
 }
 
 

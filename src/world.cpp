@@ -17,20 +17,22 @@ void World::run_world(){
 
 void World::check_collisions(){
 
-    //check collision between organism and boundary
-    /*
+    //check collision between organism and boundary    
     myOrg.y=std::min(myOrg.y, Constants::MAXY-Constants::ENTITYSIZE);
     myOrg.x=std::min(myOrg.x, Constants::MAXX-Constants::ENTITYSIZE);
     myOrg.y=std::max(myOrg.y, 0);
     myOrg.x=std::max(myOrg.x, 0);
-    */
-    if (myOrg.x<=0 ||
-        myOrg.y<=0 ||
-        myOrg.y >= Constants::MAXY-Constants::ENTITYSIZE ||
-        myOrg.x >= Constants::MAXX-Constants::ENTITYSIZE) {
-        //send stimulus to organism
-        std::string colldectect="sensor1";
-        myOrg.physical_stimulus(colldectect);
+    
+    for(int i=0;i<=7;i++){
+        sensor* currentsens = myOrg.sensorarray[i];
+    
+        if (currentsens->x<=0 ||
+            currentsens->y<=0 ||
+            currentsens->y >= Constants::MAXY-Constants::ENTITYSIZE ||
+            currentsens->x >= Constants::MAXX-Constants::ENTITYSIZE) {
+            //send stimulus to organism            
+            myOrg.physical_stimulus(currentsens->get_id());
+        }   
     }
 }
 

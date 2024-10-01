@@ -9,7 +9,7 @@
 
 
 /**
- * @todo write docs
+ * Virtual base class for any visualization logic
  */
 class visualize
 {
