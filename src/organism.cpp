@@ -17,7 +17,9 @@ Organism::Organism(const std::string id): identifier(id) {
  
  //the following coordinates are entity coordinates in world pixels 
  //(0,0) denotes the center of the entity.
- int shiftcenter = -1*Constants::ENTITYSIZE/2;
+ // the real, absolute pixel address is then x+shiftcenter+sensor.x
+ //TODO: fix the addressing and fix the collision detection
+ int shiftcenter = -1*Constants::ENTITYSIZE/2; //-32
  sensorarray[0] = new sensor("pressure", "p0", 5+shiftcenter, 2+shiftcenter);
  sensorarray[1] = new sensor("pressure", "p1", 12+shiftcenter, 1+shiftcenter);
  sensorarray[2] = new sensor("pressure", "p2", 20+shiftcenter, 1+shiftcenter);

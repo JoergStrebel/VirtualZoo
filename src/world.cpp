@@ -17,11 +17,13 @@ void World::run_world(){
 
 void World::check_collisions(){
 
-    //check collision between organism and boundary    
+    //check collision between organism and boundary
+    /*
     myOrg.y=std::min(myOrg.y, Constants::MAXY-Constants::ENTITYSIZE);
     myOrg.x=std::min(myOrg.x, Constants::MAXX-Constants::ENTITYSIZE);
     myOrg.y=std::max(myOrg.y, 0);
     myOrg.x=std::max(myOrg.x, 0);
+    */
     
     for(int i=0;i<=7;i++){
         sensor* currentsens = myOrg.sensorarray[i];

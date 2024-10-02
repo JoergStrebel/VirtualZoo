@@ -3,7 +3,7 @@
 #include "visualize.h"
 #include "visualize_gui.h"
 #include "appconfig.h"
-
+#include <unistd.h>
 
 int main(int argc, char **argv)
 {
@@ -35,6 +35,9 @@ int main(int argc, char **argv)
         quit = myVis->check_exit();
         myWorld.run_world();
         myVis->draw(myWorld);
+        
+        //slow down
+        usleep(100000);
     }
     
     delete(myVis);
