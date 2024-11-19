@@ -26,8 +26,8 @@ public:
     
     const std::string get_type() const;
     const std::string get_id() const;
-    const int x; //coordinate
-    const int y; //coordinate
+    const int x; //coordinate relative to the body of an organism
+    const int y; //coordinate relative to the body of an organism
     /**
      * Destructor
      */

@@ -27,11 +27,15 @@ void World::check_collisions(){
     
     for(int i=0;i<=7;i++){
         sensor* currentsens = myOrg.sensorarray[i];
+        
+        //Calculate effective world coordinates of sensor
+        int x = myOrg.x+Constants::ENTITYSIZE/2+currentsens->x;
+        int y = myOrg.y+Constants::ENTITYSIZE/2+currentsens->y;
     
-        if (currentsens->x<=0 ||
-            currentsens->y<=0 ||
-            currentsens->y >= Constants::MAXY-Constants::ENTITYSIZE ||
-            currentsens->x >= Constants::MAXX-Constants::ENTITYSIZE) {
+        if (x<=0 ||
+            y<=0 ||
+            y >= Constants::MAXY ||
+            x >= Constants::MAXX) {
             //send stimulus to organism            
             myOrg.physical_stimulus(currentsens->get_id());
         }   

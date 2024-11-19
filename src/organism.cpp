@@ -42,25 +42,31 @@ void Organism::eat() {
 void Organism::act() {
     
     std::pair<int, int> stimdir;
-   /* 
+    int addx=0;
+    int addy=0;
+    
     //check for received stimuli
     if (allstimuli.size()>0) {
         for (std::string stimulus : allstimuli)
-        {
+        {            
             stimdir = this->getStimulusDirection(stimulus);
-            //TODO: determine the direction from which the stimuli come
-            //TODO: derive direction from the stimdir
+            addx+=stimdir.first;
+            addy+=stimdir.second;
         }
-        // if yes, react to stimuli
-        // TODO: turn around in the opposite direction of the stimuli
-        //this->turn(...);        
-    }
-    else {*/
-        //if no, make your next move.
-        int degrees = rndnums.randomint(-1,1);
-        this->turn(degrees);
+        //determine the direction from which the stimuli come          
+        //derive direction from the stimdir
+        //turn around in the opposite direction of the stimuli
+        //TODO: FIX calculation
+        // arctan2 liefert -pi ... pi 
+        //see https://en.cppreference.com/w/cpp/numeric/math/atan2
+        double stimuliAngle = 360.0*(std::atan2(addy, addx)/(Constants::PI*2.0)); 
+        //this->turn(targetAngle);
+        //this->move();
+    } else //just move along the old course
+    {
         this->move();
-    //}
+    }
+    
 }
 
 void Organism::physical_stimulus(const std::string st){

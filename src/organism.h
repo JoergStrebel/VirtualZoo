@@ -19,7 +19,8 @@ public:
     void act();
     void physical_stimulus(const std::string st);
     double heading;
-    int x; //coordinate
+    //TODO: why would the organism know his own the x/y coordinate? This is an implementation detail
+    int x; //x-coordinate of location in the world 
     int y; //coordinate    
     //TODO: implement the rule of 3 or 5
     sensor* sensorarray[8];
