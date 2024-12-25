@@ -50,23 +50,42 @@ void Organism::act() {
         for (std::string stimulus : allstimuli)
         {            
             stimdir = this->getStimulusDirection(stimulus);
+            //add vectors to determine the direction of the stimuli, if there is more than one stimulus
             addx+=stimdir.first;
             addy+=stimdir.second;
-        }
+        }        
         //determine the direction from which the stimuli come          
         //derive direction from the stimdir
-        //turn around in the opposite direction of the stimuli
-        //TODO: FIX calculation
+        //turn around in the opposite direction of the stimuli        
         // arctan2 liefert -pi ... pi 
         //see https://en.cppreference.com/w/cpp/numeric/math/atan2
-        double stimuliAngle = 360.0*(std::atan2(addy, addx)/(Constants::PI*2.0)); 
-        //this->turn(targetAngle);
-        //this->move();
+        // we need -addy because the y-axis is inverted
+        double radAngle = std::atan2((double)-addy, (double)addx); // -pi ... pi radians
+        double targetAngle = 180.0*(radAngle/(Constants::PI)); // -180 ... 180 degrees
+        std::cout << "target angle of stimulus: " << targetAngle << std::endl;
+        //targetAngle =0 --> stimuliAngle = 90
+        //targetAngle =90 --> stimuliAngle = 0
+        //targetAngle =180 --> stimuliAngle = 270
+        //targetAngle = -90 --> stimuliAngle = 180
+        //targetAngle = -180 --> stimuliAngle = 270
+        double calcHeading = 360.0-(targetAngle-90.0); // calculate to 360 degrees pointing upwards 
+        std::cout << "calculated heading of stimulus: " << calcHeading << std::endl;
+        // normalize calcHeading to 0...360
+        double normCalcHeading = calcHeading - 360.0*std::floor(calcHeading/360.0);
+        std::cout << "Normalized heading of stimulus: " << normCalcHeading << std::endl;
+        //calculate the opposite heading as the new direction
+        double OppHeading = normCalcHeading + 180.0;
+        std::cout << "Opposing heading of stimulus: " << OppHeading << std::endl;
+        double normOppHeading = OppHeading - 360.0*std::floor(OppHeading/360.0);
+        std::cout << "Normalized opposing heading of stimulus: " << normOppHeading << std::endl;
+        double headingdiff = normOppHeading-heading;
+        std::cout << "Degrees to turn: " << headingdiff << std::endl;
+        this->turn(headingdiff);
+        this->move();
     } else //just move along the old course
     {
         this->move();
     }
-    
 }
 
 void Organism::physical_stimulus(const std::string st){
@@ -74,17 +93,22 @@ void Organism::physical_stimulus(const std::string st){
     allstimuli.push_back(st);
 }
 
-
-void Organism::turn(const int degrees) {
+// turn the organism by a certain amount of degrees
+void Organism::turn(const double degrees) {
     heading += degrees;
-    if (heading<0) heading=heading+360.0;    
-    if (heading>360.0) heading=heading-360.0;
+    heading = heading - 360.0*std::floor(heading/360.0);
+    std::cout << "New heading: " << heading << std::endl;    
 }
 
 
-void Organism::move() {        
-    y=y+stepsize*std::sin(heading+90.0);
-    x=x+stepsize*std::cos(heading+90.0);
+void Organism::move() {
+    //transform into standard radian angle
+    double radAngle = (heading/360.0)*2*Constants::PI;
+    int deltay = std::lround(stepsize*std::cos(radAngle));
+    y=y-deltay; //y-axis is inverted
+    int deltax = std::lround(stepsize*std::sin(radAngle));
+    x=x+deltax;
+    std::cout << "Step: " << deltax << ", " << deltay << std::endl;
 }
 
 std::pair<int,int> Organism::getStimulusDirection(const std::string identifier){

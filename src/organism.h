@@ -18,6 +18,8 @@ public:
     ~Organism();
     void act();
     void physical_stimulus(const std::string st);
+    // 0.0 is heading north, 90.0 is heading east, 180.0 is heading south, 270.0 is heading west
+    // counting is clockwise
     double heading;
     //TODO: why would the organism know his own the x/y coordinate? This is an implementation detail
     int x; //x-coordinate of location in the world 
@@ -34,9 +36,8 @@ private:
     double stepsize=2.0;
 
     void eat();
-    void turn(const int degrees); //turn one unit based on the current heading
+    void turn(const double degrees); //turn one unit based on the current heading
     void move(); //move one unit in the current heading
-    sim_util rndnums;
     std::vector<std::string> allstimuli;
     
     //get direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
