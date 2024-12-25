@@ -3,6 +3,9 @@ A simulator for growing artificially intelligent organisms.
 
 Please see [Computer Consciousness](computer_consciousness.md) for the background of this project.
 
+# Build instructions
+A simple `make` will do.
+
 # References
 * Beetle PNG file was downloaded from https://www.pngwing.com/en/free-png-xyjou
 
