@@ -8,6 +8,10 @@ The parameters of the simulated organism will include the following variables:
 
 The world is a 2D environment with a rectangular grid structure for internal computations (the grid coordinates are not revealed to the organism). The world is a plain, that consists of ground and small patches of edible food, which are visible to the organism. Food which can be poisonous or edible. There are obstacles, i.e. trees, bushes. 
 
+Interaction between 
+Kollisionserkennung zwischen Organismus und anderen Objekten in der Welt. Diese Erkennung muss in der Welt stattfinden, NICHT in der Visualierung. Die Visualierung malt nur, ist aber ansonsten "dumm".
+
+
 ## Organism design
 I would like to design a simulated organism that learns to survive in a simulated environment without being told anything about the environment. 
 
@@ -21,7 +25,6 @@ The organism has only very limited capabilities:
   - Timer: it has a feeling of the passage of time, although only in a sense of the time passed since an event (with certain inaccuracy). It has no pre-defined concept of an absolute time metric.
 
 The internal state of the simulated organism will include the following variables:
-
 * internal body state: 
   * energy level
   * overall assessment of the situation (am I in danger? is this a pleasant situation?)
@@ -29,6 +32,11 @@ The internal state of the simulated organism will include the following variable
 * utility / objective function: what are needs and preferences of the simulated organism
 
 Importantly, the organism does not know its absolute world coordinates or its absolute heading; it does not have GPS nor does it have a compass. If it wants to navigate, it has to rely on its senses and its memory.
+
+Perception:
+- the organism can process a stream of incoming stimuli
+- those stimuli are created by sensory cells located at dedicated spots on the organism. If a sensory cell fires, the brain then receives the message; the processing of the message depends to the type of stimulus and the learned / programmed reactions to it.
+
 
 ### Visual perception
 The organism has a limited, symmetric field of view (e.g. 90°). All objects in its field of view are mapped to a one-dimensional retina. As the organism has a pair of eyes, the visual cortex also provides the depth information of an object. Objects are only seen as contiguous color impressions with a depth information.  

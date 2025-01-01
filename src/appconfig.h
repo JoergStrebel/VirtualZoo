@@ -6,6 +6,8 @@
 
 #include <string>
 #include <map>
+#include <string_view>
+#include <vector>
 
 
 /**
@@ -19,6 +21,7 @@ public:
 
     std::string get(std::string key) const;
     void put(std::string key, std::string value);
+    std::vector<std::string> getKeys() const;
 
 private:
     std::map<std::string, std::string> imagepaths;

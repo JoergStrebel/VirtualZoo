@@ -25,4 +25,13 @@ void appconfig::put(std::string key, std::string value){
     imagepaths[key] = value;
 }
 
+std::vector<std::string> appconfig::getKeys() const {
+    std::vector<std::string> keys;
+    keys.reserve(this->imagepaths.size());
+    for (auto const& [key, val] : imagepaths) {
+        keys.push_back(key);
+    }
+    return keys;
+}
+
 
