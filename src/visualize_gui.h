@@ -81,7 +81,7 @@ private:
     void drawpoint(unsigned int x, unsigned int y, struct color color);
     void clearscreen(void);
     void updatedisplay(void);
-    void drawimage(int x, int y, int frame, struct W_Image *image, double heading);
+    void drawimage(double x, double y, int frame, struct W_Image *image, double heading);
     void drawrect(int x, int y, int w, int h, struct  color color);
     std::pair<int,int>  getTextureDetails(SDL_Texture* texture);
 

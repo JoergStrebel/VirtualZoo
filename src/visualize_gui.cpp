@@ -10,7 +10,7 @@
 #include <utility>
 #include "world.h"
 #include "constants.h"
-
+#include <cmath>
     
 visualize_gui::visualize_gui()
 {
@@ -107,7 +107,7 @@ void visualize_gui::draw(const World& myWorld)
 		//redraw the world
 		
 		//first, draw the organism
-        this->drawimage(myWorld.myOrg.x, myWorld.myOrg.y, 0, imgrepo.front(), myWorld.myOrg.heading);
+        this->drawimage(myWorld.myOrgMan.x, myWorld.myOrgMan.y, 0, imgrepo.front(), myWorld.myOrgMan.heading);
 		
         this->updatedisplay();
 }
@@ -193,7 +193,7 @@ void visualize_gui::updatedisplay(void)
  * It is assumed that the frames are stacked, i.e. the different frames can be addressed using the height parameter
  * /parameter frame : index of frame to be drawn; 0-based
  */
-void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image, double heading)
+void visualize_gui::drawimage(double x, double y, int frame, struct W_Image *image, double heading)
 {
 	int height, width;
 	SDL_Rect srcrect, dstrect;
@@ -208,8 +208,8 @@ void visualize_gui::drawimage(int x, int y, int frame, struct W_Image *image, do
 	}
 	width = image->width;
 
-	dstrect.x = x;
-	dstrect.y = y;
+	dstrect.x = std::round(x);
+	dstrect.y = std::round(y);
 	dstrect.w = ICONSIZE;
 	dstrect.h = ICONSIZE;
 

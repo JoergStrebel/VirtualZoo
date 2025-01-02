@@ -7,6 +7,7 @@
 #include <string>
 #include "locations.h"
 #include "organism.h"
+#include "organism_manager.h"
 
 /**
  * This class represents the simulated world.
@@ -21,7 +22,8 @@ public:
     void run_world();
 
     Locations allobjects;
-    Organism myOrg{"beetle"};
+    Organism_Manager myOrgMan;
+    Organism myOrg{"beetle", myOrgMan};
     
 private:
     //checks collisions among objects and between objects and boundary

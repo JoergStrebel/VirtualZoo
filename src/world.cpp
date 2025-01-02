@@ -4,6 +4,7 @@
 #include "world.h"
 #include "constants.h"
 #include "sensor.h"
+#include <cmath>
 
 World::World()
 {
@@ -29,8 +30,8 @@ void World::check_collisions(){
         sensor* currentsens = myOrg.sensorarray[i];
         
         //Calculate effective world coordinates of sensor
-        int x = myOrg.x+Constants::ENTITYSIZE/2+currentsens->x;
-        int y = myOrg.y+Constants::ENTITYSIZE/2+currentsens->y;
+        int x = std::round(myOrgMan.x)+Constants::ENTITYSIZE/2+currentsens->x;
+        int y = std::round(myOrgMan.y)+Constants::ENTITYSIZE/2+currentsens->y;
     
         if (x<=0 ||
             y<=0 ||

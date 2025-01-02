@@ -8,6 +8,9 @@
 #include "sim_util.h"
 #include "sensor.h"
 #include <vector>
+#include <array>
+
+class Organism_Manager;
 
 /**
  * @todo write docs
@@ -15,7 +18,7 @@
 class Organism
 {
 public:
-    Organism(const std::string id);
+    Organism(const std::string id, Organism_Manager& manager);
     ~Organism();
     void act();
     void physical_stimulus(const std::string st);
@@ -23,18 +26,22 @@ public:
     sensor* sensorarray[8];
 
 private:
-    const int MAXENERGY=100;
+    static constexpr int MAXENERGY=100;
+    static constexpr int RETINA_RES=90;
     const std::string identifier;
     int energy;
     float risklevel;
+    Organism_Manager& om;
 
     void eat();
-    
     void look_around();    
-
-    void move_towards();
+    void move_towards(double visual_direction);
+    void step_forward();
+    bool detect_collision();
         
     std::vector<std::string> allstimuli;
+    std::array<int, RETINA_RES> retina_color;
+    std::array<double, RETINA_RES> retina_distance;
     
     //get direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
     std::pair<int,int> getStimulusDirection(const std::string identifier);
