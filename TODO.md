@@ -1,6 +1,5 @@
 # Hohe Prio: Simulationsdesign
 ## Konkrete nächste Schritte
-- organism_manager fertig machen, um Organismus und Welt zu entkoppeln.
 - Schleife bauen in visualize_gui::load_media(...) um alle Bilder zu laden.
 - Schleife bauen in ~visualize_gui um alle Bilder zu löschen.
 - virtuelle Retina mit Tiefeninformation im Organismus implementieren
