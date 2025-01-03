@@ -32,7 +32,7 @@ public:
     bool load_media(const appconfig& values) override;
     
     //draw the scene
-    void draw(const World& myWorld) override;
+    void draw(World& myWorld) override;
 
     //check SDL events
     bool check_exit() override;

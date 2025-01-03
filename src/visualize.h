@@ -26,7 +26,7 @@ public:
     virtual bool load_media(const appconfig& values) = 0;
     
     //draw the whole scene
-    virtual void draw(const World& myWorld) = 0;
+    virtual void draw(World& myWorld) = 0;
 
     //process exit events - exit happens when visualization is stopped
     virtual bool check_exit() = 0;

@@ -21,7 +21,7 @@ public:
      * Default constructor
      */
     Locations();
-
+    std::vector<Location*> getLocations();
     
 };
 

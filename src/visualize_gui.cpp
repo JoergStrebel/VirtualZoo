@@ -11,6 +11,9 @@
 #include "world.h"
 #include "constants.h"
 #include <cmath>
+#include "locations.h"
+#include "location.h"
+#include "Point.h"
     
 visualize_gui::visualize_gui()
 {
@@ -106,13 +109,20 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 }
 
 
-void visualize_gui::draw(const World& myWorld)
+void visualize_gui::draw(World& myWorld)
 {
         this->clearscreen();
 		
 		//redraw the world
+		//draw the bushes
+		std::vector<Location*> myvec = myWorld.allobjects.getLocations();
+
+		for (Location* loc : myvec) {			
+			if (loc->getName()=="bush")
+				this->drawimage(loc->getTopLeft().x, loc->getTopLeft().y, 0, imgrepo[loc->getName()], 0);			
+		}
 		
-		//first, draw the organism
+		//draw the organism
         this->drawimage(myWorld.myOrgMan.x, myWorld.myOrgMan.y, 0, imgrepo["beetle"], myWorld.myOrgMan.heading);
 		
         this->updatedisplay();

@@ -6,24 +6,29 @@
 
 #include <string>
 #include "sim_util.h"
+#include "Point.h"
 
 /**
  * A location defines a place for an object or a patch of land with certain properties (extent ...). 
  */
 class Location
 {
-private:
-    int xlo, ylo, xru, yru;
+private:        
+    Point top_left;
+    Point bottom_right;
     int vegetation;
     bool transparency;
     int maxyield;
+    const std::string name;
     
 public:
     int availableyield;
-    Location(int px, int py, bool transp, int veg);
+    Location(int px, int py, bool transp, int veg, std::string name);
     std::string toString();
     sim_util rndnum;
-    
+    std::string getName();
+    Point getTopLeft(); 
+
 };
 
 #endif

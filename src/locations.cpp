@@ -6,7 +6,10 @@
 
 Locations::Locations()
 {
-    allobjects.push_back(new Location(5, 5, false, Constants::Vegetation_Constants::PLANT));
-    allobjects.push_back(new Location(10, 5, false, Constants::Vegetation_Constants::PLANT));
+    allobjects.push_back(new Location(100, 100, false, Constants::Vegetation_Constants::PLANT, "bush"));
+    allobjects.push_back(new Location(300, 100, false, Constants::Vegetation_Constants::PLANT, "bush"));
 }
 
+std::vector<Location*> Locations::getLocations(){
+    return allobjects;
+}

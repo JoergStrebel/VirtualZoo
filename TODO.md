@@ -1,7 +1,5 @@
 # Hohe Prio: Simulationsdesign
 ## Konkrete nächste Schritte
-- Schleife bauen in visualize_gui::load_media(...) um alle Bilder zu laden.
-- Schleife bauen in ~visualize_gui um alle Bilder zu löschen.
 - virtuelle Retina mit Tiefeninformation im Organismus implementieren
 - virtuelle Retina in die Visualisierung einbauen
 
@@ -15,3 +13,4 @@
 - baue constexpr ein für compile-time Werte, v.a. in der appconfig und constants Klasse
 - Do not pass std::string by value, as it makes an expensive copy. Tip: In most cases, use a std::string_view parameter instead 
 - Nutze % Operator für Ganzzahl-Division mit Rest
+- Nutze die SDL-Logging-Bibliothek

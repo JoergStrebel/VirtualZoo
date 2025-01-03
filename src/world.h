@@ -23,7 +23,7 @@ public:
 
     Locations allobjects;
     Organism_Manager myOrgMan;
-    Organism myOrg{"beetle", myOrgMan};
+    Organism myOrg{"beetle", myOrgMan};    
     
 private:
     //checks collisions among objects and between objects and boundary
