@@ -5,7 +5,7 @@
 #define VISUALIZE_GUI_H
 #include <SDL2/SDL.h>
 #include <string>
-#include <vector>
+#include <map>
 #include "visualize.h"
 #include "appconfig.h"
 #include "world.h"
@@ -75,7 +75,7 @@ private:
 	SDL_Texture *texture;	/* ptr to SDL texture */
     };
 
-    std::vector<struct W_Image *> imgrepo;
+    std::map<std::string, struct W_Image *> imgrepo;
 
     SDL_Texture* loadTexture( std::string path );
     void drawpoint(unsigned int x, unsigned int y, struct color color);

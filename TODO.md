@@ -12,5 +12,6 @@
 - Visualisierung und Simulation zeitmäßig entkoppeln: Welt-Zustand nur alle x Ticks zeichnen lassen
 
 # Niedrige Prio: C++-Code
-- baue constexpr ein für compile-time Werte.
+- baue constexpr ein für compile-time Werte, v.a. in der appconfig und constants Klasse
 - Do not pass std::string by value, as it makes an expensive copy. Tip: In most cases, use a std::string_view parameter instead 
+- Nutze % Operator für Ganzzahl-Division mit Rest

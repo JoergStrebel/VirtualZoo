@@ -21,7 +21,7 @@ public:
 
     std::string get(std::string key) const;
     void put(std::string key, std::string value);
-    std::vector<std::string> getKeys() const;
+    std::vector<std::string> get_keys() const;
 
 private:
     std::map<std::string, std::string> imagepaths;

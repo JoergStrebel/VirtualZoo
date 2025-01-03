@@ -11,6 +11,7 @@ appconfig::appconfig()
     //some values are hardcoded here (later, we will load them dynamically from a file)
     //the keys are defined on application level
     this->put("beetle", "/home/jstrebel/devel/VirtualZoo/resource/beetle_square.png");
+    this->put("bush", "/home/jstrebel/devel/VirtualZoo/resource/bush-clipart-xl.png");
 }
 
 appconfig::~appconfig()
@@ -25,7 +26,7 @@ void appconfig::put(std::string key, std::string value){
     imagepaths[key] = value;
 }
 
-std::vector<std::string> appconfig::getKeys() const {
+std::vector<std::string> appconfig::get_keys() const {
     std::vector<std::string> keys;
     keys.reserve(this->imagepaths.size());
     for (auto const& [key, val] : imagepaths) {

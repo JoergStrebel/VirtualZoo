@@ -22,27 +22,29 @@ visualize_gui::~visualize_gui()
     SDL_Log( "GUI Destructor called");
    //Free loaded image
 
-    //destroy textures
-    SDL_DestroyTexture( imgrepo.front()->texture );
-    imgrepo.pop_back();
-
+    //empty map	and free memory
+	for (const auto& [key, value] : imgrepo) {		
+    	SDL_DestroyTexture( value->texture );    			
+	}
+	imgrepo.clear();
+	
+	SDL_Log( "Destroy renderer");
     SDL_DestroyRenderer( renderer );
 
+	SDL_Log( "Destroy window");
 	//Destroy window
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
-
+	
+	SDL_Log( "Quit SDL subsystems");
 	//Quit SDL subsystems
 	IMG_Quit();
 	SDL_Quit();
-
 }
 
 
 bool visualize_gui::load_media(const appconfig& values)
-{    
-    const std::string key = "beetle";
-    const std::string path = values.get(key);
+{            
     bool success = true;
     struct W_Image * tmpimg;
     
@@ -54,27 +56,31 @@ bool visualize_gui::load_media(const appconfig& values)
         success = false;
     }
     
-	//Load PNG texture
-	SDL_Texture*  gPNGTexture = loadTexture( path );
-	if( gPNGTexture == NULL )
-	{
-		SDL_Log( "Failed to load PNG image!\n" );
-		success = false;
+	for(auto const key : values.get_keys())
+	{		
+		const std::string path = values.get(key);
+		SDL_Log( "SDL_image: Loading image: %s\n", path.c_str());
+		//Load PNG texture
+		SDL_Texture*  gPNGTexture = loadTexture( path );
+		if( gPNGTexture == NULL )
+		{
+			SDL_Log( "Failed to load PNG image!\n" );
+			success = false;
+		}
+
+    	//store it
+    	tmpimg = new struct W_Image();
+		tmpimg->texture = gPNGTexture;
+    	tmpimg->framecount = 1;
+
+    	const auto txvalue = this->getTextureDetails(gPNGTexture);
+    	tmpimg->height = txvalue.second;
+    	tmpimg->width = txvalue.first;
+    	tmpimg->filename = path;
+    	tmpimg->identifier = key;
+
+    	imgrepo[key]=tmpimg;
 	}
-
-    //store it
-    tmpimg = new struct W_Image();
-	tmpimg->texture = gPNGTexture;
-    tmpimg->framecount = 1;
-
-    const auto txvalue = this->getTextureDetails(gPNGTexture);
-    tmpimg->height = txvalue.second;
-    tmpimg->width = txvalue.first;
-    tmpimg->filename = path;
-    tmpimg->identifier = key;
-
-    imgrepo.push_back(tmpimg);
-
 	return success;
 }
 
@@ -107,7 +113,7 @@ void visualize_gui::draw(const World& myWorld)
 		//redraw the world
 		
 		//first, draw the organism
-        this->drawimage(myWorld.myOrgMan.x, myWorld.myOrgMan.y, 0, imgrepo.front(), myWorld.myOrgMan.heading);
+        this->drawimage(myWorld.myOrgMan.x, myWorld.myOrgMan.y, 0, imgrepo["beetle"], myWorld.myOrgMan.heading);
 		
         this->updatedisplay();
 }

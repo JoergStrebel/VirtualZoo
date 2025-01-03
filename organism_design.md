@@ -62,6 +62,12 @@ The following design principles should be followed:
 - Distribution: cognitive functions are executed in different centers or areas.  Cognitive functions are realized as ensembles of experts, which need to align to reach the best result. One cognitive function, but several possible implementations. Explainable models are a must.
 - Parallelism: there is more than one execution unit for cognitive operations
 
+## Behaviour
+So what does the organism do in this simulated world? A few strategies come to mind (in ascending order of complexity; each strategy is extending the one below):
+1. React to collisions with world boundaries, otherwise step ahead (working)
+2. React to collisions with other objects (work in progress)
+3. Look around and identify food sources
+4. Move toward food sources
 
 ## Open questions
 As my organism is a pretty simple one with pretty simple goals, the question is whether it needs to learn any higher-value intellectual capabilities at all. If you look at simple biological organisms like honey bees, they do very well without abstract reasoning or conscious cognitive abilities. 

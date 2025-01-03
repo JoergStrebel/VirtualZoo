@@ -18,7 +18,7 @@ void Organism_Manager::move() {
     y=y-deltay; //y-axis is inverted
     double deltax = stepsize*std::sin(radAngle);
     x=x+deltax;
-    std::cout << "Step: " << deltax << ", " << deltay << std::endl;
+    //std::cout << "Step: " << deltax << ", " << deltay << std::endl;
 }
 
 
@@ -26,7 +26,7 @@ void Organism_Manager::move() {
 void Organism_Manager::turn(const double degrees) {
     heading += degrees;
     heading = heading - 360.0*std::floor(heading/360.0);
-    std::cout << "New heading: " << heading << std::endl;    
+    //std::cout << "New heading: " << heading << std::endl;    
 }
 
 void Organism_Manager::turn_around(int addx, int addy){
@@ -48,23 +48,23 @@ double Organism_Manager::determine_opposite_direction(int addx, int addy) {
         // we need -addy because the y-axis is inverted
         double radAngle = std::atan2((double)-addy, (double)addx); // -pi ... pi radians
         double targetAngle = 180.0*(radAngle/(Constants::PI)); // -180 ... 180 degrees
-        std::cout << "target angle of stimulus: " << targetAngle << std::endl;
+        //std::cout << "target angle of stimulus: " << targetAngle << std::endl;
         //targetAngle =0 --> stimuliAngle = 90
         //targetAngle =90 --> stimuliAngle = 0
         //targetAngle =180 --> stimuliAngle = 270
         //targetAngle = -90 --> stimuliAngle = 180
         //targetAngle = -180 --> stimuliAngle = 270
         double calcHeading = 360.0-(targetAngle-90.0); // calculate to 360 degrees pointing upwards 
-        std::cout << "calculated heading of stimulus: " << calcHeading << std::endl;
+        //std::cout << "calculated heading of stimulus: " << calcHeading << std::endl;
         // normalize calcHeading to 0...360
         double normCalcHeading = calcHeading - 360.0*std::floor(calcHeading/360.0);
-        std::cout << "Normalized heading of stimulus: " << normCalcHeading << std::endl;
+        //std::cout << "Normalized heading of stimulus: " << normCalcHeading << std::endl;
         //calculate the opposite heading as the new direction
         double OppHeading = normCalcHeading + 180.0;
-        std::cout << "Opposing heading of stimulus: " << OppHeading << std::endl;
+        //std::cout << "Opposing heading of stimulus: " << OppHeading << std::endl;
         double normOppHeading = OppHeading - 360.0*std::floor(OppHeading/360.0);
-        std::cout << "Normalized opposing heading of stimulus: " << normOppHeading << std::endl;
+        //std::cout << "Normalized opposing heading of stimulus: " << normOppHeading << std::endl;
         double headingdiff = normOppHeading-heading;
-        std::cout << "Degrees to turn: " << headingdiff << std::endl;
+        //std::cout << "Degrees to turn: " << headingdiff << std::endl;
         return headingdiff;
 }
