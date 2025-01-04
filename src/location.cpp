@@ -4,10 +4,10 @@
 #include "location.h"
 #include "constants.h"
 #include "sim_util.h"
+#include "colour.h"
 
-
-Location::Location(int px, int py, bool transp, int veg, std::string name) : name(name), top_left(px, py), 
-bottom_right(px+Constants::ENTITYSIZE, py+Constants::ENTITYSIZE)
+Location::Location(int px, int py, bool transp, int veg, std::string name, Colour col) : name(name), top_left(px, py), 
+bottom_right(px+Constants::ENTITYSIZE, py+Constants::ENTITYSIZE), color(col)
     {
         maxyield  = rndnum.randomint(1, Constants::MAXYIELD);
         availableyield = maxyield;        
@@ -16,17 +16,22 @@ bottom_right(px+Constants::ENTITYSIZE, py+Constants::ENTITYSIZE)
     }
 
 
-std::string Location::toString()
+const std::string Location::toString()
 {
     return "Maxyield: "+std::to_string(maxyield);
 }
 
-std::string Location::getName()
+const std::string Location::getName()
 {
     return name;
 }
 
-Point Location::getTopLeft()
+const Point Location::getTopLeft()
 {
     return top_left;
 }
+const Point Location::getBottomRight()
+{
+    return bottom_right;
+}
+

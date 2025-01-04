@@ -24,28 +24,29 @@ public:
     void physical_stimulus(const std::string st);
     //TODO: implement the rule of 3 or 5
     sensor* sensorarray[8];
+    static constexpr int RETINA_RES=90;
+    std::array<int, RETINA_RES> retina_color;
+    std::array<double, RETINA_RES> retina_distance;
 
 private:
-    static constexpr int MAXENERGY=100;
-    static constexpr int RETINA_RES=90;
+    static constexpr int MAXENERGY=100;    
     const std::string identifier;
     int energy;
     float risklevel;
     Organism_Manager& om;
 
     void eat();
-    void look_around();    
+    
+    //check the retina for interesting things
+    void recognize();    
     void move_towards(double visual_direction);
     void step_forward();
     bool detect_collision();
         
-    std::vector<std::string> allstimuli;
-    std::array<int, RETINA_RES> retina_color;
-    std::array<double, RETINA_RES> retina_distance;
+    std::vector<std::string> allstimuli;    
     
     //get direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
-    std::pair<int,int> getStimulusDirection(const std::string identifier);
-    
+    std::pair<int,int> getStimulusDirection(const std::string identifier);    
 };
 
 #endif // ORGANISM_H

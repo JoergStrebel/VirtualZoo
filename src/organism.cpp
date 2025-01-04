@@ -88,3 +88,5 @@ bool Organism::detect_collision(){
     return allstimuli.size()>0;
 }
 
+void Organism::recognize(){} 
+

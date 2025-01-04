@@ -68,3 +68,7 @@ double Organism_Manager::determine_opposite_direction(int addx, int addy) {
         //std::cout << "Degrees to turn: " << headingdiff << std::endl;
         return headingdiff;
 }
+
+void Organism_Manager::create_visual_impression(){
+    //create a visual impression of the world
+    }

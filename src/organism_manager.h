@@ -5,6 +5,7 @@ class Organism;
 
 /**
  * Manager class of each indidivual organism; it stores details needed for the simulation
+ * This class mediates between the world and the organism
  */
 class Organism_Manager
 {
@@ -18,7 +19,7 @@ public:
     void register_organism(Organism* org);
     void turn_around(int addx, int addy);
     void move(); //move one unit in the current heading
-    //TODO: implement the rule of 3 or 5        
+    void create_visual_impression();        
 
 private:    
     Organism* organism;

@@ -7,6 +7,8 @@
 #include <string>
 #include "sim_util.h"
 #include "Point.h"
+#include "constants.h"
+#include "colour.h"
 
 /**
  * A location defines a place for an object or a patch of land with certain properties (extent ...). 
@@ -20,15 +22,16 @@ private:
     bool transparency;
     int maxyield;
     const std::string name;
+    sim_util rndnum;
     
 public:
     int availableyield;
-    Location(int px, int py, bool transp, int veg, std::string name);
-    std::string toString();
-    sim_util rndnum;
-    std::string getName();
-    Point getTopLeft(); 
-
+    Location(int px, int py, bool transp, int veg, std::string name, Colour col);
+    const std::string toString();    
+    const std::string getName();
+    const Point getTopLeft();
+    const Point getBottomRight();
+    const Colour color;
 };
 
 #endif

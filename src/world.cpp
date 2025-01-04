@@ -18,28 +18,32 @@ void World::run_world(){
 
 void World::check_collisions(){
 
-    //check collision between organism and boundary
-    /*
-    myOrg.y=std::min(myOrg.y, Constants::MAXY-Constants::ENTITYSIZE);
-    myOrg.x=std::min(myOrg.x, Constants::MAXX-Constants::ENTITYSIZE);
-    myOrg.y=std::max(myOrg.y, 0);
-    myOrg.x=std::max(myOrg.x, 0);
-    */
-    
+    auto allLocs = allobjects.getLocations();    
     for(int i=0;i<=7;i++){
         sensor* currentsens = myOrg.sensorarray[i];
         
         //Calculate effective world coordinates of sensor
         int x = std::round(myOrgMan.x)+Constants::ENTITYSIZE/2+currentsens->x;
         int y = std::round(myOrgMan.y)+Constants::ENTITYSIZE/2+currentsens->y;
-    
+        
+        //check collision between organism and world boundaries
         if (x<=0 ||
             y<=0 ||
             y >= Constants::MAXY ||
             x >= Constants::MAXX) {
             //send stimulus to organism            
             myOrg.physical_stimulus(currentsens->get_id());
-        }   
+        }
+        //check collision between organism and locations
+        for (Location* loc :allLocs){
+            if (x>=loc->getTopLeft().x &&
+                x<=loc->getBottomRight().x &&
+                y >= loc->getTopLeft().y &&
+                y <= loc->getBottomRight().y) {
+            //send stimulus to organism            
+                myOrg.physical_stimulus(currentsens->get_id());            
+            }
+        }
     }
 }
 

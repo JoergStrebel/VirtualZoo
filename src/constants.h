@@ -1,6 +1,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include "colour.h"
+#include <string>
+
 //  Purpose : Global Constants for Simulation
 namespace Constants
 {  
@@ -16,6 +19,9 @@ namespace Constants
     const int ENTITIESPERX = 20;
     const int ENTITYSIZE = MAXX/ENTITIESPERX; //we assume square entites in the simulated world
     const double PI = 3.141592;
+    const Colour WHITE = Colour(255, 255, 255, "white");
+    const Colour GREEN = Colour(69, 120, 8, "green");
+    
 }
 #endif
 
