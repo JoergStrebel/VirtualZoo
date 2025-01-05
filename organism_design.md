@@ -39,8 +39,7 @@ Perception:
 
 
 ### Visual perception
-The organism has a limited, symmetric field of view (e.g. 90°). All objects in its field of view are mapped to a one-dimensional retina. As the organism has a pair of eyes, the visual cortex also provides the depth information of an object. Objects are only seen as contiguous color impressions with a depth information.  
-
+The organism has a limited, symmetric field of view (e.g. 90°). All objects in its field of view are mapped to a single one-dimensional retina. As the organism has a pair of eyes, the visual cortex also provides the depth information of an object (in addition to the visual information from the retina). Objects are only seen as contiguous color impressions with a depth information. The eyes are modelled in a very simple way as pinhole cameras projecting light on the retina.  
 
 ## Cognitive design - ideas
 I don't want to model any other specific behavior or capability; I would like to let it develop those capabilities by itself. It knows how to walk, but it does not know where to go. It knows how to eat, but it does not know what is good and bad nutrition. It has a sense of direction, but it does not know any compass, cardinal points, degree of rotation or any other abstraction. It will only orient itself based on its perception. It knows how to sense the environment, but it has no given interpretation of the data (it cannot see / recognize).
