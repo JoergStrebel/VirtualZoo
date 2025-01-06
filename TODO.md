@@ -1,7 +1,5 @@
 # Hohe Prio: Simulationsdesign
 ## Konkrete nächste Schritte
-- Grafische Primitiven Vertex, Line, Rectangle einführen
-- Klasse Location erweitern um Rectangle, welches die Lage des Objekts in der Welt definiert
 - Methoden im Organismus_Manager schreiben, die die Rectangles auf die Retina abbilden
 - virtuelle Retina mit Tiefeninformation im Organismus implementieren
 - Logik im Organismus einbauen, die eine einfache Mustererkennung macht

@@ -3,14 +3,14 @@
 #define POINT_H
 
 /**
- * @todo write docs
+ * Geometric Point in the world's 2d plane (i.e. a pixel)
  */
 class Point
 {
 public:
-    int x;
-    int y;
-    Point(int px, int py);
+    const int x;
+    const int y;
+    Point(const int px, const int py);
 
 private:
         

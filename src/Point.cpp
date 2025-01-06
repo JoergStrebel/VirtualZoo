@@ -1,5 +1,5 @@
 #include "Point.h"
 
-Point::Point(int px, int py) : x(px), y(py)
+Point::Point(const int px, const int py) : x(px), y(py)
 {
 }

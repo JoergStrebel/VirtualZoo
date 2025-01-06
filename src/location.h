@@ -7,6 +7,8 @@
 #include <string>
 #include "sim_util.h"
 #include "Point.h"
+#include "Line.h"
+#include "Rectangle.h"
 #include "constants.h"
 #include "colour.h"
 
@@ -23,6 +25,8 @@ private:
     int maxyield;
     const std::string name;
     sim_util rndnum;
+    const Rectangle area;
+    const Colour color; 
     
 public:
     int availableyield;
@@ -31,7 +35,7 @@ public:
     const std::string getName();
     const Point getTopLeft();
     const Point getBottomRight();
-    const Colour color;
+    const Rectangle& getArea();    
 };
 
 #endif
