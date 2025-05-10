@@ -22,7 +22,7 @@ void Organism_Manager::move() {
 }
 
 
-// turn the organism by a certain amount of degrees
+// turn the organism by a certain number of degrees
 void Organism_Manager::turn(const double degrees) {
     heading += degrees;
     heading = heading - 360.0*std::floor(heading/360.0);
@@ -39,7 +39,7 @@ void Organism_Manager::register_organism(Organism* org){
     organism=org;
 }
 
-double Organism_Manager::determine_opposite_direction(int addx, int addy) {
+double Organism_Manager::determine_opposite_direction(int addx, int addy) const {
       //determine the direction from which the stimuli come          
         //derive direction from the stimdir
         //turn around in the opposite direction of the stimuli        
@@ -70,5 +70,9 @@ double Organism_Manager::determine_opposite_direction(int addx, int addy) {
 }
 
 void Organism_Manager::create_visual_impression(){
-    //create a visual impression of the world
+    //TODO: create a vector containing projections from the objects / shapes in the world
+
+
+    //hand over the projections to the organism
+
     }

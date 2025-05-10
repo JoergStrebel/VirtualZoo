@@ -25,5 +25,6 @@
 - ersetze std::vector mit std::array wo möglich aus Performance-Gründen
 - verschiebe die Kollisionserkennung von world.h nach organism_manager.h
 - prüfe und implementiere die Regel von 3 oder 5 (https://en.cppreference.com/w/cpp/language/rule_of_three)
+- migriere das Makefile nach CMake
 
 

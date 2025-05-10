@@ -1,3 +1,7 @@
 build
 bin/*
 .git
+.kdev4
+.vscode
+.idea
+*.o

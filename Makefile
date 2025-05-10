@@ -11,7 +11,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
     -Wno-unused-function -Wno-sign-conversion -fsanitize=undefined -D_GNU_SOURCE -pedantic-errors
 CFLAGS := -g -Wall -Wextra -W -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter \
     -Wno-unused-function -Wno-sign-conversion -pedantic-errors `sdl2-config --cflags` -march=native -mtune=native \
-    -mfpmath=sse -msse4.1 -msse4.2 -std=c++17
+    -mfpmath=sse -msse4.1 -msse4.2 -std=c++17 -flto
 
 LIB := -pthread -L lib `sdl2-config --libs` -lSDL2_image
 INC := -I src
@@ -27,6 +27,8 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 clean:
 	@echo " Cleaning..."; 
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+
+all: $(TARGET)
 
 # Tests
 #tester:

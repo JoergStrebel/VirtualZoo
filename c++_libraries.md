@@ -5,5 +5,5 @@
 * regex: C++ has built-in regex now and they're pretty damn good too.
 * unique_ptr and shared_ptr: these implement various kinds of reference counting and enforcing memory ownership. Once these were added people largely stopped doing loads of heap allocation and instead now opt for more on the stack and only these pointers where needed.
 * thread: Multi-threading is baked into the language by default.
-* filesystem: Need to traverse the filesystem
+* filesystem: if you need to traverse the filesystem
 * 

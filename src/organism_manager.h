@@ -4,7 +4,7 @@
 class Organism;
 
 /**
- * Manager class of each indidivual organism; it stores details needed for the simulation
+ * Manager class of each organism; it stores details needed for the simulation
  * This class mediates between the world and the organism
  */
 class Organism_Manager
@@ -24,8 +24,8 @@ public:
 private:    
     Organism* organism;
     double stepsize=2.0;    
-    double determine_opposite_direction(int addx, int addy);
-    void turn(const double degrees); //turn one unit based on the current heading
+    double determine_opposite_direction(int addx, int addy) const;
+    void turn(double degrees); //turn one unit based on the current heading
 };
 
-#endif // ORGANISM_MANAGER_H
+#endif // ORGANISM__MANAGER_H

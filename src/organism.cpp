@@ -31,9 +31,7 @@ Organism::Organism(const std::string id, Organism_Manager& manager): identifier(
 
 }
 
-Organism::~Organism(){
-
-}
+Organism::~Organism()= default;
 
 void Organism::eat() {
     std::cout << "Eating...";
@@ -88,5 +86,13 @@ bool Organism::detect_collision(){
     return allstimuli.size()>0;
 }
 
-void Organism::recognize(){} 
+void Organism::recognize(){}
+
+void Organism::visual_stimulus(const std::vector<Projection>& projections){
+    std::cout << "Received visual stimulus: " << std::endl;
+    //TODO: translate the projections onto pixels on the retina - depth mapping, pixel rendering
+    for (Projection p : projections) {
+        //std::cout << "Projection: " << p.startrad << ", " << p.startdepth << ", " << p.endrad << ", " << p.enddepth << ", " << p.color << std::endl;
+    }
+}
 
