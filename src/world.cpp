@@ -5,14 +5,14 @@
 #include "constants.h"
 #include "sensor.h"
 #include <cmath>
+#include "Projection.h"
 
 World::World()
-{
-
-}
+= default;
 
 void World::run_world(){
     this->check_collisions();
+    this->create_visual_impression();
     myOrg.act();
 }
 
@@ -31,10 +31,10 @@ void World::check_collisions(){
             y<=0 ||
             y >= Constants::MAXY ||
             x >= Constants::MAXX) {
-            //send stimulus to organism            
+            //send stimulus to the organism
             myOrg.physical_stimulus(currentsens->get_id());
         }
-        //check collision between organism and locations
+        //check collision between the organism and locations
         for (Location* loc :allLocs){
             if (x>=loc->getTopLeft().x &&
                 x<=loc->getBottomRight().x &&
@@ -47,3 +47,16 @@ void World::check_collisions(){
     }
 }
 
+void World::create_visual_impression(){
+    //TODO: create a vector containing projections from the objects / shapes in the world
+    auto allLocs = allobjects.getLocations();
+    // 1. loop over all lines in all location objects
+    // 2. calculate the relative radians of each of the two points in the line
+    // 3. sort all points by their relative radians
+    // 4. check whether the point is visible, i.e. is not occluded by another line
+    // 5. check the need to split a line: if the two points of a line have different visibilities, split the line and introduce another point
+    // 6. calculate the depth of each visible point
+
+    //hand over the projections to the organism as a visual stimulus
+
+}

@@ -19,7 +19,6 @@ public:
     void register_organism(Organism* org);
     void turn_around(int addx, int addy);
     void move(); //move one unit in the current heading
-    void create_visual_impression();        
 
 private:    
     Organism* organism;
