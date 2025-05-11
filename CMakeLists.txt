@@ -11,6 +11,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wconversion -Wdouble-p
 # Include-Verzeichnisse
 include_directories(src)
 
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+FetchContent_MakeAvailable(googletest)
+
 # Finde SDL2 und SDL2_image
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
@@ -36,6 +43,23 @@ set(SOURCES
 
 # Zieldefinition
 add_executable(simcore ${SOURCES})
-
 # Linker-Optionen
 target_link_libraries(simcore PRIVATE SDL2::SDL2 SDL2_image::SDL2_image pthread)
+
+
+enable_testing()
+
+add_executable(
+        organism_test
+        test/organismtest_test.cpp
+)
+target_link_libraries(
+        organism_test
+        GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(organism_test)
+
+
+

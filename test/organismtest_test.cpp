@@ -1,8 +1,10 @@
-// SPDX-FileCopyrightText: 2023 Jörg Strebel <email>
-// SPDX-License-Identifier: Apache-2.0
+#include <gtest/gtest.h>
 
-#include <CppUTest/TestHarness.h>
-
-TEST_GROUP(OrganismTest) {
-
-};
+//TODO: add real test cases for Projection and World
+// Demonstrate some basic assertions.
+TEST(HelloTest, BasicAssertions) {
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    // Expect equality.
+    EXPECT_EQ(7 * 6, 42);
+}
