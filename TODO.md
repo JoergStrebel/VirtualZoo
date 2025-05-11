@@ -1,5 +1,6 @@
 # Hohe Prio: Simulationsdesign
 ## Konkrete nächste Schritte
+- Schreibe Unit-Tests für World::create_visual_impression() und für die Projection-Erzeugung
 - Methoden im Organismus_Manager schreiben, die die Rectangles auf die Retina abbilden
 - virtuelle Retina mit Tiefeninformation im Organismus implementieren
 - Logik im Organismus einbauen, die eine einfache Mustererkennung macht
@@ -25,6 +26,6 @@
 - ersetze std::vector mit std::array wo möglich aus Performance-Gründen
 - verschiebe die Kollisionserkennung von world.h nach organism_manager.h
 - prüfe und implementiere die Regel von 3 oder 5 (https://en.cppreference.com/w/cpp/language/rule_of_three)
-- migriere das Makefile nach CMake
+
 
 
