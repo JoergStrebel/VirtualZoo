@@ -10,7 +10,7 @@ class Point
 public:
     const int x;
     const int y;
-    Point(int px, int py);
+    constexpr Point(int px, int py);
 
 private:
         

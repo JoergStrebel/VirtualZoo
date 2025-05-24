@@ -11,7 +11,7 @@ class Rectangle
 {
 public:
     const std::array<Line, 4> sides;    
-    Rectangle(const Line& l1, const Line& l2, const Line& l3, const Line& l4);
+    constexpr Rectangle(const Line& l1, const Line& l2, const Line& l3, const Line& l4);
 
 private:
         

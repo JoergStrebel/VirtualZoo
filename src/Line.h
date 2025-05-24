@@ -11,7 +11,7 @@ class Line
 public:
     const Point p1;
     const Point p2;
-    Line(const Point& p1, const Point& p2);
+    constexpr Line(const Point& p1, const Point& p2);
 
 private:
         
