@@ -19,10 +19,10 @@ class Organism_Manager;
 class Organism
 {
 public:
-    Organism(std::string id, Organism_Manager& manager);
+    Organism(std::string_view id, Organism_Manager& manager);
     ~Organism();
     void act();
-    void physical_stimulus(std::string st);
+    void physical_stimulus(std::string_view st);
     //TODO: implement the rule of 3 or 5
     sensor* sensorarray[8];
     void visual_stimulus(const std::vector<Projection>& projections);
@@ -49,7 +49,7 @@ private:
     std::vector<std::string> allstimuli;    
     
     //get the direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
-    std::pair<int,int> getStimulusDirection(std::string identifier);
+    std::pair<int,int> getStimulusDirection(std::string_view identifier);
 };
 
 #endif // ORGANISM_H

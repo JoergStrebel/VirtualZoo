@@ -18,12 +18,12 @@ appconfig::~appconfig()
 {
 }
 
-std::string appconfig::get(std::string key) const {
-    return imagepaths.at(key);
+std::string appconfig::get(std::string_view key) const {
+    return imagepaths.at(std::string(key));
 }
 
-void appconfig::put(std::string key, std::string value){
-    imagepaths[key] = value;
+void appconfig::put(std::string_view key, std::string_view value){
+    imagepaths[std::string(key)] = std::string(value);
 }
 
 std::vector<std::string> appconfig::get_keys() const {

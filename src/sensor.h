@@ -22,7 +22,7 @@ public:
      * Default constructor
      * the identifier is unique per organism, no matter what type of sensor is modeled
      */
-    sensor(const std::string typedesc, const std::string identifier, const int x, const int y);
+    sensor(std::string_view typedesc, std::string_view identifier, const int x, const int y);
     
     const std::string get_type() const;
     const std::string get_id() const;

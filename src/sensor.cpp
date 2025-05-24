@@ -8,8 +8,8 @@
  * @todo write docs
  */
 
-sensor::sensor(const std::string typedesc, const std::string identifier, const int x, const int y):
-x(x), y(y), typedesc(typedesc), identifier(identifier)
+sensor::sensor(std::string_view typedesc, std::string_view identifier, const int x, const int y):
+x(x), y(y), typedesc(std::string(typedesc)), identifier(std::string(identifier))
     {
     }
 

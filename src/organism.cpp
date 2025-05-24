@@ -9,7 +9,7 @@
 #include "organism_manager.h"
 
 
-Organism::Organism(const std::string id, Organism_Manager& manager): identifier(id), om(manager) {
+Organism::Organism(std::string_view id, Organism_Manager& manager): identifier(std::string(id)), om(manager) {
     this->energy = MAXENERGY;
     this->risklevel = 0.0;  
     om.register_organism(this);
@@ -63,12 +63,12 @@ void Organism::act() {
     }
 }
 
-void Organism::physical_stimulus(const std::string st){
+void Organism::physical_stimulus(std::string_view st){
     std::cout << "Received stimulus: " << st << std::endl;
-    allstimuli.push_back(st);
+    allstimuli.push_back(std::string(st));
 }
 
-std::pair<int,int> Organism::getStimulusDirection(const std::string identifier){
+std::pair<int,int> Organism::getStimulusDirection(std::string_view identifier){
      for(int i=0;i<=7;i++){
         sensor* currentsens = this->sensorarray[i];
         if (currentsens->get_id()==identifier) return std::make_pair(currentsens->x, currentsens->y);

@@ -19,8 +19,8 @@ public:
     appconfig();
     ~appconfig();
 
-    std::string get(std::string key) const;
-    void put(std::string key, std::string value);
+    std::string get(std::string_view key) const;
+    void put(std::string_view key, std::string_view value);
     std::vector<std::string> get_keys() const;
 
 private:

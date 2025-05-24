@@ -9,10 +9,10 @@
 #include "Line.h"
 #include "Rectangle.h"
 
-Location::Location(int px, int py, bool transp, int veg, std::string name, Colour col) :     
+Location::Location(int px, int py, bool transp, int veg, std::string_view name, Colour col) :     
     top_left(px, py), 
     bottom_right(px+Constants::ENTITYSIZE, py+Constants::ENTITYSIZE), 
-    name(name),     
+    name(std::string(name)),     
     area(Rectangle( 
         Line(Point(px,py),Point(px+Constants::ENTITYSIZE,py)), 
         Line(Point(px+Constants::ENTITYSIZE,py),Point(px+Constants::ENTITYSIZE,py+Constants::ENTITYSIZE)), 
