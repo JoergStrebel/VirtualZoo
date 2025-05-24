@@ -15,7 +15,6 @@
 # Niedrige Prio: C++-Code
 - ersetze C-style sensorarray mit `std::array<sensor, 8>`
 - nutze const references für alle Funktionsparameter mit nicht-fundamentalen Typen
-- ersetze std::string Funktionsparameter mit std::string_view Parameter
 - baue constexpr ein für compile-time Werte, v.a. in der appconfig und constants Klasse
 - wandle reine Funktionen in constexpr-Funktionen um
 - nutze % Operator für Ganzzahl-Division mit Rest
