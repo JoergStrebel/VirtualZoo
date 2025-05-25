@@ -41,7 +41,7 @@ const Point Location::getTopLeft()
 {
     return top_left;
 }
-const Point Location::getBottomRight()
+const Point& Location::getBottomRight() const
 {
     return bottom_right;
 }

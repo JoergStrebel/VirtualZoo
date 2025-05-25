@@ -34,7 +34,7 @@ public:
     const std::string toString();    
     const std::string getName();
     const Point getTopLeft();
-    const Point getBottomRight();
+    const Point& getBottomRight() const;
     const Rectangle& getArea();    
 };
 

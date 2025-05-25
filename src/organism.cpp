@@ -48,7 +48,7 @@ void Organism::act() {
     //Primitive behaviour: if you collide, turn around.
 
     //let the Organism_Manager do the calculations
-        for (std::string stimulus : allstimuli)
+        for (const std::string& stimulus : allstimuli)
         {            
             stimdir = this->getStimulusDirection(stimulus);
             //add vectors to determine the direction of the stimuli, if there is more than one stimulus
@@ -83,7 +83,7 @@ void Organism::step_forward(){
 void Organism::move_towards(double visual_direction){}
 
 bool Organism::detect_collision(){
-    return allstimuli.size()>0;
+    return !allstimuli.empty();
 }
 
 void Organism::recognize(){}

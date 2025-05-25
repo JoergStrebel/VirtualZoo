@@ -29,7 +29,9 @@ private:
     //checks collisions among objects and between objects and boundary
     //sends events to the affected objects, so that they can react on.
     void check_collisions();
-    //supplies the organism with a world view
+    //calculates the radians value of a point in the world relative to the organism's position
+    float calculateRadians(float x, float y) const;
+     //supplies the organism with a world view
     void create_visual_impression();
 };
 

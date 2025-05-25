@@ -5,6 +5,8 @@
 #include "constants.h"
 #include "sensor.h"
 #include <cmath>
+#include <list>
+
 #include "Projection.h"
 
 World::World()
@@ -23,8 +25,8 @@ void World::check_collisions(){
         sensor* currentsens = myOrg.sensorarray[i];
         
         //Calculate effective world coordinates of sensor
-        int x = std::round(myOrgMan.x)+Constants::ENTITYSIZE/2+currentsens->x;
-        int y = std::round(myOrgMan.y)+Constants::ENTITYSIZE/2+currentsens->y;
+        int x = std::round(myOrgMan.x)+Constants::ENTITYSIZE/2.0+currentsens->x;
+        int y = std::round(myOrgMan.y)+Constants::ENTITYSIZE/2.0+currentsens->y;
         
         //check collision between organism and world boundaries
         if (x<=0 ||
@@ -40,23 +42,78 @@ void World::check_collisions(){
                 x<=loc->getBottomRight().x &&
                 y >= loc->getTopLeft().y &&
                 y <= loc->getBottomRight().y) {
-            //send stimulus to organism            
+            //send stimulus to the organism
                 myOrg.physical_stimulus(currentsens->get_id());            
             }
         }
     }
 }
 
+// Calculates the radians value of a point in the world relative to the organism's position
+// 0.0 is heading west, pi/2 is heading north, pi is heading east, 3pi/2 is heading south
+// counting is counterclockwise
+float World::calculateRadians(float x, float y) const {
+    float result=std::atan2(y - myOrgMan.y, x - myOrgMan.x);
+    // Normalize the result to be in the range [0, 2*PI)
+    if (result < 0) {
+        result += 2 * Constants::PI; // Add 2*PI to make it positive
+    }
+    return result;
+
+}
+
 void World::create_visual_impression(){
     //TODO: create a vector containing projections from the objects / shapes in the world
     auto allLocs = allobjects.getLocations();
-    // 1. loop over all lines in all location objects
-    // 2. calculate the relative radians of each of the two points in the line
-    // 3. sort all points by their relative radians
-    // 4. check whether the point is visible, i.e. is not occluded by another line
-    // 5. check the need to split a line: if the two points of a line have different visibilities, split the line and introduce another point
-    // 6. calculate the depth of each visible point
+    std::vector<Projection> projections;
+    std::list<std::array<float,2>> sorted_points; //zero entry is always the bigger one
 
+    for (Location* loc : allLocs)
+    {
+        Rectangle area = loc->getArea();
+        // 1. loop over all lines in all location objects
+        for (const Line& line : area.sides)
+        {
+            // 2. calculate the relative radians of each of the two points in the line
+            float p1Rad = this->calculateRadians(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y);
+            float p2Rad = this->calculateRadians(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y);
+            //insert the points according to their relative radians
+            // swap values if p1 is after p2, i.e. swap if p1 has a larger radian value than p2
+            // p1 is always the lower value, p2 is always the higher value
+            if (p1Rad > p2Rad) {
+                std::swap(p1Rad, p2Rad);
+            }
+            // add the points to the sorted list
+            sorted_points.push_back({p2Rad, p1Rad});
+        }
+        // 3. sort all points by their relative radians
+        // as we scan from 0 to 2*PI, we can sort the points by their first element (p1Rad)
+        sorted_points.sort([](const std::array<float,2>& a, const std::array<float,2>& b) {
+            return a[1] < b[1]; // sort by the first element (p1Rad)
+        });
+        // 4. check whether the point is visible, i.e. is not occluded by another line
+        // For this, we need to check if there are any points in the sorted list that are between the two points of the line
+        // For each point, we need to check if there is a point with a smaller p1Rad and a larger p2Rad
+        //TODO: check for-loop for correctness
+        for (const auto& point : sorted_points) {
+            // point[0] is p2Rad, point[1] is p1Rad
+            // check if there is a point with a smaller p1Rad and a larger p2Rad
+            bool visible = true;
+            for (const auto& other_point : sorted_points) {
+                if (other_point[0] < point[1] && other_point[1] > point[0]) {
+                    visible = false; // occluded by another line
+                    break;
+                }
+            }
+            if (visible) {
+                // 5. create a projection for the visible points
+                //projections.emplace_back(point[1], 0.0f, point[0], 0.0f, loc->getColor().getColorValue());
+            }
+        }
+        // 5. check the need to split a line: if the two points of a line have different visibilities, split the line and introduce another point
+        // 6. calculate the depth of each visible point
+        //float startDepth = std::hypot(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y);
+        //float endDepth = std::hypot(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y);
+    }
     //hand over the projections to the organism as a visual stimulus
-
 }
