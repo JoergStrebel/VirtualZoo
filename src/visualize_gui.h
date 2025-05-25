@@ -32,7 +32,7 @@ public:
     bool load_media(const appconfig& values) override;
     
     //draw the scene
-    void draw(World& myWorld) override;
+    void draw(const World& myWorld) override;
 
     //check SDL events
     bool check_exit() override;
@@ -78,11 +78,11 @@ private:
     std::map<std::string, struct W_Image *> imgrepo;
 
     SDL_Texture* loadTexture( std::string path );
-    void drawpoint(unsigned int x, unsigned int y, struct color color);
+    void drawpoint(unsigned int x, unsigned int y, const struct color& color);
     void clearscreen(void);
     void updatedisplay(void);
     void drawimage(double x, double y, int frame, struct W_Image *image, double heading);
-    void drawrect(int x, int y, int w, int h, struct  color color);
+    void drawrect(int x, int y, int w, int h, const struct color& color);
     std::pair<int,int>  getTextureDetails(SDL_Texture* texture);
 
 };

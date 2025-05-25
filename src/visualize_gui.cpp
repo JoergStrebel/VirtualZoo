@@ -109,7 +109,7 @@ SDL_Texture* visualize_gui::loadTexture( std::string path )
 }
 
 
-void visualize_gui::draw(World& myWorld)
+void visualize_gui::draw(const World& myWorld)
 {
         this->clearscreen();
 		
@@ -183,7 +183,7 @@ bool visualize_gui::init()
 }
 
 /* Draw a point. Surface must be locked with SDL_LockSurface(). */
-void visualize_gui::drawpoint(unsigned int x, unsigned int y, struct color color)
+void visualize_gui::drawpoint(unsigned int x, unsigned int y, const struct color& color)
 {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawPoint(renderer, x, y);
@@ -238,7 +238,7 @@ void visualize_gui::drawimage(double x, double y, int frame, struct W_Image *ima
 }
 
 
-void visualize_gui::drawrect(int x, int y, int w, int h, struct  color color)
+void visualize_gui::drawrect(int x, int y, int w, int h, const struct color& color)
 {
     struct color colorsave;
     Uint8 a;

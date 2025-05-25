@@ -12,7 +12,7 @@ class Colour
 private:            
     
 public:
-    Colour(uint8_t r, uint8_t g, uint8_t b, std::string name) : r(r), g(g), b(b), name(name) {}
+    Colour(uint8_t r, uint8_t g, uint8_t b, const std::string& name) : r(r), g(g), b(b), name(name) {}
     const uint8_t r;
     const uint8_t g;
     const uint8_t b;

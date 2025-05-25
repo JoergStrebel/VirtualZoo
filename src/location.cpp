@@ -9,7 +9,7 @@
 #include "Line.h"
 #include "Rectangle.h"
 
-Location::Location(int px, int py, bool transp, int veg, std::string_view name, Colour col) :     
+Location::Location(int px, int py, bool transp, int veg, std::string_view name, const Colour& col) :     
     top_left(px, py), 
     bottom_right(px+Constants::ENTITYSIZE, py+Constants::ENTITYSIZE), 
     name(std::string(name)),     
