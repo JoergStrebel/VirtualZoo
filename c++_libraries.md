@@ -6,4 +6,4 @@
 * unique_ptr and shared_ptr: these implement various kinds of reference counting and enforcing memory ownership. Once these were added people largely stopped doing loads of heap allocation and instead now opt for more on the stack and only these pointers where needed.
 * thread: Multi-threading is baked into the language by default.
 * filesystem: if you need to traverse the filesystem
-* 
+* CGAL: The Computational Geometry Algorithms Library is a C++ library that provides easy access to efficient and reliable geometric algorithms in the form of a C++ library.

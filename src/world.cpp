@@ -62,11 +62,18 @@ float World::calculateRadians(float x, float y) const {
 
 }
 
+//create a private struct for the scanline algorithm
+struct scanline_point{
+    float pRad;
+    Line line;
+};
+
+//Visibility check using a scanline algorithm
 void World::create_visual_impression(){
     //TODO: create a vector containing projections from the objects / shapes in the world
     auto allLocs = allobjects.getLocations();
     std::vector<Projection> projections;
-    std::list<std::array<float,2>> sorted_points; //zero entry is always the bigger one
+    std::list<scanline_point> sorted_points;
 
     for (Location* loc : allLocs)
     {
@@ -75,29 +82,22 @@ void World::create_visual_impression(){
         for (const Line& line : area.sides)
         {
             // 2. calculate the relative radians of each of the two points in the line
-            float p1Rad = this->calculateRadians(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y);
-            float p2Rad = this->calculateRadians(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y);
-            //insert the points according to their relative radians
-            // swap values if p1 is after p2, i.e. swap if p1 has a larger radian value than p2
-            // p1 is always the lower value, p2 is always the higher value
-            if (p1Rad > p2Rad) {
-                std::swap(p1Rad, p2Rad);
-            }
+            auto p1Rad = scanline_point{
+                this->calculateRadians(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y), line};
+            auto p2Rad =  scanline_point{
+                this->calculateRadians(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y), line};
+
             // add the points to the sorted list
-            sorted_points.push_back({p2Rad, p1Rad});
+            sorted_points.push_back(p2Rad);
+            sorted_points.push_back(p1Rad);
         }
         // 3. sort all points by their relative radians
-        // as we scan from 0 to 2*PI, we can sort the points by their first element (p1Rad)
-        sorted_points.sort([](const std::array<float,2>& a, const std::array<float,2>& b) {
-            return a[1] < b[1]; // sort by the first element (p1Rad)
+        sorted_points.sort([](const scanline_point& a, const scanline_point& b) {
+            return a.pRad < b.pRad;
         });
+
         // 4. check whether the point is visible, i.e. is not occluded by another line
-        // For this, we need to check if there are any points in the sorted list that are between the two points of the line
-        // For each point, we need to check if there is a point with a smaller p1Rad and a larger p2Rad
-        //TODO: check for-loop for correctness
         for (const auto& point : sorted_points) {
-            // point[0] is p2Rad, point[1] is p1Rad
-            // check if there is a point with a smaller p1Rad and a larger p2Rad
             bool visible = true;
             for (const auto& other_point : sorted_points) {
                 if (other_point[0] < point[1] && other_point[1] > point[0]) {
@@ -117,3 +117,4 @@ void World::create_visual_impression(){
     }
     //hand over the projections to the organism as a visual stimulus
 }
+

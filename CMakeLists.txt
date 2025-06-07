@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Compiler-Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion -pedantic-errors -march=native -mtune=native -mfpmath=sse -msse4.1 -msse4.2 -flto")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion -pedantic-errors -march=native -mtune=native -mfpmath=sse -msse4.1 -msse4.2 -flto -fno-math-errno -fno-signaling-nans -fno-trapping-math -freciprocal-math")
 
 # Include-Verzeichnisse
 include_directories(src)
@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(googletest)
 # Finde SDL2 und SDL2_image
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(CGAL REQUIRED)
 
 # Quell-Dateien explizit angeben
 set(SOURCES
@@ -44,8 +45,7 @@ set(SOURCES
 # Zieldefinition
 add_executable(simcore ${SOURCES})
 # Linker-Optionen
-target_link_libraries(simcore PRIVATE SDL2::SDL2 SDL2_image::SDL2_image pthread)
-
+target_link_libraries(simcore PRIVATE SDL2::SDL2 SDL2_image::SDL2_image pthread CGAL::CGAL)
 
 enable_testing()
 
