@@ -97,19 +97,7 @@ void World::create_visual_impression(){
         });
 
         // 4. check whether the point is visible, i.e. is not occluded by another line
-        for (const auto& point : sorted_points) {
-            bool visible = true;
-            for (const auto& other_point : sorted_points) {
-                if (other_point[0] < point[1] && other_point[1] > point[0]) {
-                    visible = false; // occluded by another line
-                    break;
-                }
-            }
-            if (visible) {
-                // 5. create a projection for the visible points
-                //projections.emplace_back(point[1], 0.0f, point[0], 0.0f, loc->getColor().getColorValue());
-            }
-        }
+        // 5. create a projection for the visible points
         // 5. check the need to split a line: if the two points of a line have different visibilities, split the line and introduce another point
         // 6. calculate the depth of each visible point
         //float startDepth = std::hypot(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y);

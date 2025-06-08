@@ -11,6 +11,11 @@
 #include "Rectangle.h"
 #include "constants.h"
 #include "colour.h"
+#include <CGAL/Simple_cartesian.h>
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef Kernel::Point_2 Point_2;
+typedef Kernel::Segment_2 Segment_2;
 
 /**
  * A location defines a place for an object or a patch of land with certain properties (extent ...). 
@@ -26,7 +31,8 @@ private:
     const std::string name;
     sim_util rndnum;
     const Rectangle area;
-    const Colour color; 
+    const Colour color;
+    Point_2 top_left_new;
     
 public:
     int availableyield;
@@ -35,7 +41,8 @@ public:
     const std::string getName();
     const Point getTopLeft();
     const Point& getBottomRight() const;
-    const Rectangle& getArea();    
+    const Rectangle& getArea();
+    const Point_2& getTopLeft_new() const;
 };
 
 #endif

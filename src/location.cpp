@@ -50,4 +50,8 @@ const Rectangle& Location::getArea()
     return area;
 }
 
+const Point_2& Location::getTopLeft_new() const {
+    return top_left_new;
+}
+
 
