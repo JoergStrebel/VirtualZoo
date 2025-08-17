@@ -4,7 +4,7 @@
 
 #include "Projection.h"
 
-Projection::Projection(float startrad, float startdepth, float endrad, float enddepth, int color) :
+Projection::Projection(double startrad, double startdepth, double endrad, double enddepth, int color) :
     startrad(startrad), startdepth(startdepth), endrad(endrad), enddepth(enddepth), color(color)
 {
 }

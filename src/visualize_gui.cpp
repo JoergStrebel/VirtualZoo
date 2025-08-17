@@ -119,7 +119,7 @@ void visualize_gui::draw(const World& myWorld)
 
 		for (Location* loc : myvec) {			
 			if (loc->getName()=="bush")
-				this->drawimage(loc->getTopLeft().x, loc->getTopLeft().y, 0, imgrepo[loc->getName()], 0);			
+				this->drawimage(loc->getTopLeft().getX(), loc->getTopLeft().getY(), 0, imgrepo[loc->getName()], 0);
 		}
 		
 		//draw the organism

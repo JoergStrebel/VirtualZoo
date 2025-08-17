@@ -38,10 +38,10 @@ void World::check_collisions(){
         }
         //check collision between the organism and locations
         for (Location* loc :allLocs){
-            if (x>=loc->getTopLeft().x &&
-                x<=loc->getBottomRight().x &&
-                y >= loc->getTopLeft().y &&
-                y <= loc->getBottomRight().y) {
+            if (x>=loc->getTopLeft().getX() &&
+                x<=loc->getBottomRight().getX() &&
+                y >= loc->getTopLeft().getY() &&
+                y <= loc->getBottomRight().getY()) {
             //send stimulus to the organism
                 myOrg.physical_stimulus(currentsens->get_id());            
             }
@@ -68,13 +68,20 @@ struct scanline_point{
     Line line;
 };
 
-//Visibility check using a scanline algorithm
+/* Render the locations in the world as a visual impression for the organism
+ * TODO: create a vector containing projections from the objects / shapes in the world
+ */
 void World::create_visual_impression(){
-    //TODO: create a vector containing projections from the objects / shapes in the world
     auto allLocs = allobjects.getLocations();
     std::vector<Projection> projections;
     std::list<scanline_point> sorted_points;
+    //TODO: remove hidden surfaces by calculating the dot product of the orientation of the organism and the normal vector of the line
 
+    //TODO: remove invisible surfaces by sorting out lines which are completely outside the view frustum
+    //and by splitting lines where a part of the line is outside the view frustum
+
+
+    //TODO: find visible parts of the lines
     for (Location* loc : allLocs)
     {
         Rectangle area = loc->getArea();
@@ -83,9 +90,9 @@ void World::create_visual_impression(){
         {
             // 2. calculate the relative radians of each of the two points in the line
             auto p1Rad = scanline_point{
-                this->calculateRadians(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y), line};
+                this->calculateRadians(line.p1.getX() - myOrgMan.x, line.p1.getY() - myOrgMan.y), line};
             auto p2Rad =  scanline_point{
-                this->calculateRadians(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y), line};
+                this->calculateRadians(line.p2.getX() - myOrgMan.x, line.p2.getY() - myOrgMan.y), line};
 
             // add the points to the sorted list
             sorted_points.push_back(p2Rad);
@@ -96,12 +103,20 @@ void World::create_visual_impression(){
             return a.pRad < b.pRad;
         });
 
-        // 4. check whether the point is visible, i.e. is not occluded by another line
-        // 5. create a projection for the visible points
-        // 5. check the need to split a line: if the two points of a line have different visibilities, split the line and introduce another point
-        // 6. calculate the depth of each visible point
-        //float startDepth = std::hypot(line.p1.x - myOrgMan.x, line.p1.y - myOrgMan.y);
-        //float endDepth = std::hypot(line.p2.x - myOrgMan.x, line.p2.y - myOrgMan.y);
+        /* 4.Rank the points using a scanline algorithm
+         * Start with the left-most point; if there are more than one, take the one with the smallest distance and mark the others as invisible
+         * start iterating through the sorted points.
+         * Check if there are lines in front of it or behind it. To do so,
+         * - construct the line segment from the organism through the point and
+         * - intersect it with the lines having smaller radians starting points and bigger radians ending points.
+         *      if there are no intersections, mark point as visible XOR
+         *      if there are intersection points in front of it, mark point as invisible. XOR
+         *      if there are intersection points behind it and if the point is a start point, insert the intersection point on the line behind it as an end point and mark both the new point and the point as visible. XOR
+         *      if there are intersection points behind it and if the point is an end point, insert the intersection point on the line behind it as a start point and mark both the new point and the point as visible.
+         *
+         * At the end of the scanline algorithm, we have a list of visible start / end points. Only lines segments with a visible start and end point are visible in total.
+         */
+
     }
     //hand over the projections to the organism as a visual stimulus
 }

@@ -12,11 +12,11 @@
 class Projection
 {
 public:
-    Projection(float startrad, float startdepth, float endrad, float enddepth, int color );
-    const float startrad;
-    const float startdepth;
-    const float endrad;
-    const float enddepth;
+    Projection(double startrad, double startdepth, double endrad, double enddepth, int color );
+    const double startrad;
+    const double startdepth;
+    const double endrad;
+    const double enddepth;
     const int color;
 
 };
