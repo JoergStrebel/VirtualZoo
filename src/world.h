@@ -31,6 +31,11 @@ private:
     void check_collisions();
     //calculates the radians value of a point in the world relative to the organism's position
     float calculateRadians(float x, float y) const;
+    //calculates squared distance between two points
+    float distanceSquared(float x1, float y1, float x2, float y2) const;
+    //finds intersection between a ray and a line segment
+    bool raySegmentIntersection(float rayAngle, const Line& segment, 
+                               float& outX, float& outY, float& outDist) const;
      //supplies the organism with a world view
     void create_visual_impression();
 };

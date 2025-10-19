@@ -59,65 +59,189 @@ float World::calculateRadians(float x, float y) const {
         result += 2 * Constants::PI; // Add 2*PI to make it positive
     }
     return result;
-
 }
 
-//create a private struct for the scanline algorithm
-struct scanline_point{
-    float pRad;
-    Line line;
+// Helper function to calculate the squared distance between two points
+float World::distanceSquared(float x1, float y1, float x2, float y2) const {
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    return dx * dx + dy * dy;
+}
+
+// Helper function to find ray-segment intersection
+// Returns true if intersection exists, and sets intersection point and distance
+bool World::raySegmentIntersection(float rayAngle, const Line& segment, 
+                                   float& outX, float& outY, float& outDist) const {
+    float observerX = myOrgMan.x;
+    float observerY = myOrgMan.y;
+    
+    // Ray direction
+    float rayDirX = std::cos(rayAngle);
+    float rayDirY = std::sin(rayAngle);
+    
+    // Segment endpoints
+    float x1 = segment.p1.getX();
+    float y1 = segment.p1.getY();
+    float x2 = segment.p2.getX();
+    float y2 = segment.p2.getY();
+    
+    // Segment direction
+    float segDirX = x2 - x1;
+    float segDirY = y2 - y1;
+    
+    // Solve the parametric equations:
+    // observerX + t * rayDirX = x1 + u * segDirX
+    // observerY + t * rayDirY = y1 + u * segDirY
+    // where t >= 0 and 0 <= u <= 1
+    
+    float denominator = rayDirX * segDirY - rayDirY * segDirX;
+    
+    // Lines are parallel
+    if (std::abs(denominator) < 1e-10) {
+        return false;
+    }
+    
+    float dx = x1 - observerX;
+    float dy = y1 - observerY;
+    
+    float u = (rayDirX * dy - rayDirY * dx) / denominator;
+    float t = (segDirX * dy - segDirY * dx) / denominator;
+    
+    // Check if intersection is valid
+    if (t >= 0 && u >= 0 && u <= 1) {
+        outX = observerX + t * rayDirX;
+        outY = observerY + t * rayDirY;
+        outDist = t;
+        return true;
+    }
+    
+    return false;
+}
+
+// Structure to represent an angle event in the angular sweep
+struct AngleEvent {
+    float angle;
+    const Line* segment;
+    int locationIndex;  // To track which location this segment belongs to
+    bool isEndpoint;    // True if this is an actual endpoint, false if it's an offset ray
+    
+    // Constructor
+    AngleEvent(float a, const Line* seg, int locIdx, bool isEnd = true) 
+        : angle(a), segment(seg), locationIndex(locIdx), isEndpoint(isEnd) {}
 };
 
 /* Render the locations in the world as a visual impression for the organism
- * TODO: create a vector containing projections from the objects / shapes in the world
+ * Uses an angular sweep algorithm to determine visible portions of line segments
  */
 void World::create_visual_impression(){
     auto allLocs = allobjects.getLocations();
     std::vector<Projection> projections;
-    std::list<scanline_point> sorted_points;
-    //TODO: remove hidden surfaces by calculating the dot product of the orientation of the organism and the normal vector of the line
-
-    //TODO: remove invisible surfaces by sorting out lines which are completely outside the view frustum
-    //and by splitting lines where a part of the line is outside the view frustum
-
-
-    //TODO: find visible parts of the lines
-    for (Location* loc : allLocs)
-    {
+    std::vector<AngleEvent> angleEvents;
+    
+    // Collect all line segments and create angle events
+    int locationIndex = 0;
+    for (Location* loc : allLocs) {
         Rectangle area = loc->getArea();
-        // 1. loop over all lines in all location objects
-        for (const Line& line : area.sides)
-        {
-            // 2. calculate the relative radians of each of the two points in the line
-            auto p1Rad = scanline_point{
-                this->calculateRadians(line.p1.getX() - myOrgMan.x, line.p1.getY() - myOrgMan.y), line};
-            auto p2Rad =  scanline_point{
-                this->calculateRadians(line.p2.getX() - myOrgMan.x, line.p2.getY() - myOrgMan.y), line};
-
-            // add the points to the sorted list
-            sorted_points.push_back(p2Rad);
-            sorted_points.push_back(p1Rad);
+        
+        for (const Line& line : area.sides) {
+            float x1 = line.p1.getX();
+            float y1 = line.p1.getY();
+            float x2 = line.p2.getX();
+            float y2 = line.p2.getY();
+            
+            // Calculate angles for both endpoints
+            float angle1 = calculateRadians(x1, y1);
+            float angle2 = calculateRadians(x2, y2);
+            
+            // Add events for both endpoints
+            angleEvents.emplace_back(angle1, &line, locationIndex, true);
+            angleEvents.emplace_back(angle2, &line, locationIndex, true);
+            
+            // Add slightly offset angles to handle edge cases
+            const float epsilon = 0.0001f;
+            angleEvents.emplace_back(angle1 - epsilon, &line, locationIndex, false);
+            angleEvents.emplace_back(angle1 + epsilon, &line, locationIndex, false);
+            angleEvents.emplace_back(angle2 - epsilon, &line, locationIndex, false);
+            angleEvents.emplace_back(angle2 + epsilon, &line, locationIndex, false);
         }
-        // 3. sort all points by their relative radians
-        sorted_points.sort([](const scanline_point& a, const scanline_point& b) {
-            return a.pRad < b.pRad;
-        });
-
-        /* 4.Rank the points using a scanline algorithm
-         * Start with the left-most point; if there are more than one, take the one with the smallest distance and mark the others as invisible
-         * start iterating through the sorted points.
-         * Check if there are lines in front of it or behind it. To do so,
-         * - construct the line segment from the organism through the point and
-         * - intersect it with the lines having smaller radians starting points and bigger radians ending points.
-         *      if there are no intersections, mark point as visible XOR
-         *      if there are intersection points in front of it, mark point as invisible. XOR
-         *      if there are intersection points behind it and if the point is a start point, insert the intersection point on the line behind it as an end point and mark both the new point and the point as visible. XOR
-         *      if there are intersection points behind it and if the point is an end point, insert the intersection point on the line behind it as a start point and mark both the new point and the point as visible.
-         *
-         * At the end of the scanline algorithm, we have a list of visible start / end points. Only lines segments with a visible start and end point are visible in total.
-         */
-
+        locationIndex++;
     }
-    //hand over the projections to the organism as a visual stimulus
+    
+    // Sort events by angle
+    std::sort(angleEvents.begin(), angleEvents.end(), 
+              [](const AngleEvent& a, const AngleEvent& b) {
+                  return a.angle < b.angle;
+              });
+    
+    // Perform angular sweep
+    float lastAngle = -1.0f;
+    float lastDepth = -1.0f;
+    int lastLocationIndex = -1;
+    
+    for (const auto& event : angleEvents) {
+        float currentAngle = event.angle;
+        
+        // Normalize angle to [0, 2*PI)
+        while (currentAngle < 0) currentAngle += 2 * Constants::PI;
+        while (currentAngle >= 2 * Constants::PI) currentAngle -= 2 * Constants::PI;
+        
+        // Find the closest intersection for this angle across all segments
+        float closestDist = std::numeric_limits<float>::infinity();
+        int closestLocationIndex = -1;
+        
+        locationIndex = 0;
+        for (Location* loc : allLocs) {
+            Rectangle area = loc->getArea();
+            
+            for (const Line& segment : area.sides) {
+                float intersectX, intersectY, intersectDist;
+                if (raySegmentIntersection(currentAngle, segment, intersectX, intersectY, intersectDist)) {
+                    if (intersectDist < closestDist) {
+                        closestDist = intersectDist;
+                        closestLocationIndex = locationIndex;
+                    }
+                }
+            }
+            locationIndex++;
+        }
+        
+        // If we found an intersection and it's different from the last segment
+        if (closestLocationIndex != -1) {
+            // If this is a new visible segment (different location or significant angle/depth change)
+            if (lastLocationIndex != closestLocationIndex || lastAngle < 0 ||
+                std::abs(currentAngle - lastAngle) > 0.001f) {
+                
+                // If we had a previous segment, close it and create a projection
+                if (lastLocationIndex != -1 && lastAngle >= 0) {
+                    // Get the color of the previous location
+                    int color = 0; // Default color
+                    if (lastLocationIndex >= 0 && lastLocationIndex < (int)allLocs.size()) {
+                        // You may need to add a method to get color from Location
+                        // For now, using locationIndex as a simple color identifier
+                        color = lastLocationIndex;
+                    }
+                    
+                    projections.emplace_back(lastAngle, lastDepth, currentAngle, closestDist, color);
+                }
+                
+                // Start tracking this new visible segment
+                lastAngle = currentAngle;
+                lastDepth = closestDist;
+                lastLocationIndex = closestLocationIndex;
+            }
+        }
+    }
+    
+    // Close the last projection if any
+    if (lastLocationIndex != -1 && lastAngle >= 0) {
+        int color = lastLocationIndex;
+        // Close with a small angle increment
+        projections.emplace_back(lastAngle, lastDepth, lastAngle + 0.001f, lastDepth, color);
+    }
+    
+    // Hand over the projections to the organism as a visual stimulus
+    if (!projections.empty()) {
+        myOrg.visual_stimulus(projections);
+    }
 }
 
