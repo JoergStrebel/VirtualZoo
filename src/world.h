@@ -36,6 +36,8 @@ private:
     //finds intersection between a ray and a line segment
     bool raySegmentIntersection(float rayAngle, const Line& segment, 
                                float& outX, float& outY, float& outDist) const;
+     static double normalize(double radvalue);
+     double heading_to_rad(double heading);
      //supplies the organism with a world view
     void create_visual_impression();
 };

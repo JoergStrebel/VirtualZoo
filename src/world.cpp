@@ -53,12 +53,7 @@ void World::check_collisions(){
 // 0.0 is heading west, pi/2 is heading north, pi is heading east, 3pi/2 is heading south
 // counting is counterclockwise
 float World::calculateRadians(float x, float y) const {
-    float result=std::atan2(y - myOrgMan.y, x - myOrgMan.x);
-    // Normalize the result to be in the range [0, 2*PI)
-    if (result < 0) {
-        result += 2 * Constants::PI; // Add 2*PI to make it positive
-    }
-    return result;
+    return normalize(std::atan2(y - myOrgMan.y, x - myOrgMan.x));
 }
 
 // Helper function to calculate the squared distance between two points
@@ -130,6 +125,20 @@ struct AngleEvent {
         : angle(a), segment(seg), locationIndex(locIdx), isEndpoint(isEnd) {}
 };
 
+double World::normalize(double radvalue) {
+    while (radvalue < 0) radvalue += 2.0 * Constants::PI;
+    while (radvalue >= 2.0 * Constants::PI) radvalue -= ((double)2.0) * Constants::PI;
+    return radvalue;
+}
+
+double World::heading_to_rad(double heading) {
+    // 0.0 is heading north, 90.0 is heading east, 180.0 is heading south, 270.0 is heading west
+    // counting is clockwise
+    //TODO
+    double angle = 90.0 + heading;
+    return normalize((angle / 360.0) * 2.0 * Constants::PI);
+}
+
 /* Render the locations in the world as a visual impression for the organism
  * Uses an angular sweep algorithm to determine visible portions of line segments
  */
@@ -179,11 +188,10 @@ void World::create_visual_impression(){
     int lastLocationIndex = -1;
     
     for (const auto& event : angleEvents) {
-        float currentAngle = event.angle;
+        double currentAngle = event.angle;
         
         // Normalize angle to [0, 2*PI)
-        while (currentAngle < 0) currentAngle += 2.0 * Constants::PI;
-        while (currentAngle >= 2.0 * Constants::PI) currentAngle -= ((double)2.0) * Constants::PI;
+        currentAngle=normalize(currentAngle);
         
         // Find the closest intersection for this angle across all segments
         float closestDist = std::numeric_limits<float>::infinity();
@@ -238,7 +246,25 @@ void World::create_visual_impression(){
         // Close with a small angle increment
         projections.emplace_back(lastAngle, lastDepth, lastAngle + 0.001f, lastDepth, color);
     }
-    
+    //Use the field_of_view to filter projections outside the view frustum
+    std::vector<Projection> filteredProjections;
+    double halfFOVrad = myOrgMan.field_of_view_rad / 2.0;
+    //TODO - wrong
+    double orgHeadingRad = (myOrgMan.heading / 360.0) * 2.0 * Constants::PI;
+    double leftBound = normalize(orgHeadingRad - halfFOVrad);
+    double rightBound = normalize(orgHeadingRad + halfFOVrad);
+
+    for (const Projection& p : projections) {
+        //normal case
+        bool is_within_fov = (p.startrad >= leftBound && p.endrad <= rightBound);
+
+        if ((p.endrad >= leftBound && p.startrad <= rightBound) ||
+            (leftBound < 0 && (p.endrad >= leftBound + 2.0 * Constants::PI || p.startrad <= rightBound)) ||
+            (rightBound >= 2.0 * Constants::PI && (p.endrad >= leftBound || p.startrad <= rightBound - 2.0 * Constants::PI))) {
+            filteredProjections.push_back(p);
+        }
+    }
+
     // Hand over the projections to the organism as a visual stimulus
     // Always hand over, even if vector is empty --> nothing to be seen
     myOrg.visual_stimulus(projections);

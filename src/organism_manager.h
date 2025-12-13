@@ -1,5 +1,6 @@
 #ifndef ORGANISM__MANAGER_H
 #define ORGANISM__MANAGER_H
+#include "constants.h"
 
 class Organism;
 
@@ -13,7 +14,8 @@ public:
     Organism_Manager();
     // 0.0 is heading north, 90.0 is heading east, 180.0 is heading south, 270.0 is heading west
     // counting is clockwise
-    double heading;    
+    double heading;
+    double field_of_view_rad = Constants::PI/2.0; //90° in rad
     double x; //x-coordinate of location in the world 
     double y; //coordinate    
     void register_organism(Organism* org);

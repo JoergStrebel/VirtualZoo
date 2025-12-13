@@ -23,7 +23,6 @@ public:
     ~Organism();
     void act();
     void physical_stimulus(std::string_view st);
-    //TODO: implement the rule of 3 or 5
     sensor* sensorarray[8];
     void visual_stimulus(const std::vector<Projection>& projections);
 
@@ -31,7 +30,6 @@ private:
     static constexpr int MAXENERGY=100;    
     const std::string identifier;
     int energy;
-    float risklevel;
     static constexpr int RETINA_RES=90;
     std::array<int, RETINA_RES> retina_color;
     std::array<double, RETINA_RES> retina_distance;
