@@ -3,6 +3,7 @@
 
 #include "colour.h"
 #include <string>
+#include <climits>
 
 //  Purpose : Global Constants for Simulation
 namespace Constants
@@ -21,6 +22,7 @@ namespace Constants
     const double PI = 3.141592;
     const Colour WHITE = Colour(255, 255, 255, "white");
     const Colour GREEN = Colour(69, 120, 8, "green");
+    const double UNLIMITEDSIGHTDISTANCE = -1.0; //use negative value for unlimited sight distance
     
 }
 #endif

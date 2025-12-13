@@ -49,7 +49,7 @@ private:
     std::vector<std::string> allstimuli;    
     
     //get the direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
-    std::pair<int,int> getStimulusDirection(std::string_view identifier);
+    std::pair<int,int> getStimulusDirection(std::string_view id_object);
 };
 
 #endif // ORGANISM_H

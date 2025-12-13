@@ -182,8 +182,8 @@ void World::create_visual_impression(){
         float currentAngle = event.angle;
         
         // Normalize angle to [0, 2*PI)
-        while (currentAngle < 0) currentAngle += 2 * Constants::PI;
-        while (currentAngle >= 2 * Constants::PI) currentAngle -= 2 * Constants::PI;
+        while (currentAngle < 0) currentAngle += 2.0 * Constants::PI;
+        while (currentAngle >= 2.0 * Constants::PI) currentAngle -= ((double)2.0) * Constants::PI;
         
         // Find the closest intersection for this angle across all segments
         float closestDist = std::numeric_limits<float>::infinity();
@@ -240,8 +240,7 @@ void World::create_visual_impression(){
     }
     
     // Hand over the projections to the organism as a visual stimulus
-    if (!projections.empty()) {
-        myOrg.visual_stimulus(projections);
-    }
+    // Always hand over, even if vector is empty --> nothing to be seen
+    myOrg.visual_stimulus(projections);
 }
 

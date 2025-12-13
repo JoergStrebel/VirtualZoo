@@ -65,13 +65,13 @@ void Organism::act() {
 
 void Organism::physical_stimulus(std::string_view st){
     std::cout << "Received stimulus: " << st << std::endl;
-    allstimuli.push_back(std::string(st));
+    allstimuli.emplace_back(st);
 }
 
-std::pair<int,int> Organism::getStimulusDirection(std::string_view identifier){
+std::pair<int,int> Organism::getStimulusDirection(std::string_view id_object){
      for(int i=0;i<=7;i++){
         sensor* currentsens = this->sensorarray[i];
-        if (currentsens->get_id()==identifier) return std::make_pair(currentsens->x, currentsens->y);
+        if (currentsens->get_id()==id_object) return std::make_pair(currentsens->x, currentsens->y);
     }
     return std::make_pair(0, 0);
 }
@@ -90,9 +90,16 @@ void Organism::recognize(){}
 
 void Organism::visual_stimulus(const std::vector<Projection>& projections){
     std::cout << "Received visual stimulus: " << std::endl;
-    //TODO: translate the projections onto pixels on the retina - depth mapping, pixel rendering
+    //erase previous retina content
+    retina_color.fill(0);
+    retina_distance.fill(Constants::UNLIMITEDSIGHTDISTANCE);
+
+    // TODO: translate the projections onto pixels on the retina - depth mapping, pixel rendering
+    // std::array<int, RETINA_RES> retina_color;
+    // std::array<double, RETINA_RES> retina_distance;
+    // What is my view frustrum / view angle?
     for (Projection p : projections) {
-        //std::cout << "Projection: " << p.startrad << ", " << p.startdepth << ", " << p.endrad << ", " << p.enddepth << ", " << p.color << std::endl;
+
     }
 }
 
