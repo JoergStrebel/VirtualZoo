@@ -134,8 +134,7 @@ double World::normalize(double radvalue) {
 double World::heading_to_rad(double heading) {
     // 0.0 is heading north, 90.0 is heading east, 180.0 is heading south, 270.0 is heading west
     // counting is clockwise
-    //TODO
-    double angle = 90.0 + heading;
+    double angle = 360 +(90.0 - heading);
     return normalize((angle / 360.0) * 2.0 * Constants::PI);
 }
 
@@ -226,6 +225,7 @@ void World::create_visual_impression(){
                     if (lastLocationIndex >= 0 && lastLocationIndex < (int)allLocs.size()) {
                         // You may need to add a method to get color from Location
                         // For now, using locationIndex as a simple color identifier
+                        //TODO : implement proper color retrieval
                         color = lastLocationIndex;
                     }
                     
@@ -249,24 +249,34 @@ void World::create_visual_impression(){
     //Use the field_of_view to filter projections outside the view frustum
     std::vector<Projection> filteredProjections;
     double halfFOVrad = myOrgMan.field_of_view_rad / 2.0;
-    //TODO - wrong
-    double orgHeadingRad = (myOrgMan.heading / 360.0) * 2.0 * Constants::PI;
-    double leftBound = normalize(orgHeadingRad - halfFOVrad);
-    double rightBound = normalize(orgHeadingRad + halfFOVrad);
+    double orgHeadingRad = heading_to_rad(myOrgMan.heading);
+    double leftBound = normalize(orgHeadingRad + halfFOVrad);
+    double rightBound = normalize(orgHeadingRad - halfFOVrad);
 
+    //simple clipping operation on the projections
+    //TODO: not 100% correct for the case, when leftBound > rightBound (i.e. FOV crosses 0 rad)
+    //TODO: not 100% correct for the case, when clipping occurs because the depth at the clipped edge is different
     for (const Projection& p : projections) {
         //normal case
-        bool is_within_fov = (p.startrad >= leftBound && p.endrad <= rightBound);
-
-        if ((p.endrad >= leftBound && p.startrad <= rightBound) ||
-            (leftBound < 0 && (p.endrad >= leftBound + 2.0 * Constants::PI || p.startrad <= rightBound)) ||
-            (rightBound >= 2.0 * Constants::PI && (p.endrad >= leftBound || p.startrad <= rightBound - 2.0 * Constants::PI))) {
+        if (p.startrad >= leftBound && p.endrad <= rightBound) {
             filteredProjections.push_back(p);
+        } else if (p.startrad < leftBound && p.endrad <= rightBound)
+        {
+            Projection clippedProj(leftBound, p.startdepth, p.endrad, p.enddepth, p.color);
+            filteredProjections.push_back(clippedProj);
+        } else if (p.startrad >= leftBound && p.endrad > rightBound)
+        {
+            Projection clippedProj(p.startrad, p.startdepth, rightBound, p.enddepth, p.color);
+            filteredProjections.push_back(clippedProj);
+        } else if (p.startrad < leftBound && p.endrad > rightBound)
+        {
+            Projection clippedProj(leftBound, p.startdepth, rightBound, p.enddepth, p.color);
+            filteredProjections.push_back(clippedProj);
         }
     }
 
     // Hand over the projections to the organism as a visual stimulus
     // Always hand over, even if vector is empty --> nothing to be seen
-    myOrg.visual_stimulus(projections);
+    myOrg.visual_stimulus(filteredProjections);
 }
 

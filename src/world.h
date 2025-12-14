@@ -37,9 +37,26 @@ private:
     bool raySegmentIntersection(float rayAngle, const Line& segment, 
                                float& outX, float& outY, float& outDist) const;
      static double normalize(double radvalue);
-     double heading_to_rad(double heading);
+     static double heading_to_rad(double heading);
      //supplies the organism with a world view
     void create_visual_impression();
+
+#ifdef UNIT_TEST
+#include <gtest/gtest.h>
+#endif
+
+#ifdef UNIT_TEST
+    // Grant test access to private methods (Option A)
+    // Unit tests rely on FRIEND_TEST to access private helpers.
+    friend class ::testing::Test; // ensure google test symbols available
+    // Specific friend test declarations
+    FRIEND_TEST(WorldTest, CalculateRadians_Basic);
+    FRIEND_TEST(WorldTest, DistanceSquared_Basic);
+    FRIEND_TEST(WorldTest, Normalize_Basic);
+    FRIEND_TEST(WorldTest, HeadingToRad_Basic);
+    FRIEND_TEST(WorldTest, RaySegmentIntersection_Hit);
+    FRIEND_TEST(WorldTest, RaySegmentIntersection_Miss);
+#endif
 };
 
 #endif // WORLD_H

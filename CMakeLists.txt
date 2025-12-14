@@ -62,5 +62,18 @@ target_link_libraries(
 include(GoogleTest)
 gtest_discover_tests(organism_test)
 
-
-
+# Add world_test target for World unit tests
+add_executable(
+    world_test
+    test/world_test.cpp
+)
+# Define UNIT_TEST for the test compilation so FRIEND_TEST is active
+target_compile_definitions(world_test PRIVATE UNIT_TEST)
+# Link against gtest and CGAL (tests use CGAL-based Point/Line)
+target_link_libraries(
+    world_test
+    GTest::gtest_main
+    CGAL::CGAL
+)
+# Register with CTest
+gtest_discover_tests(world_test)
