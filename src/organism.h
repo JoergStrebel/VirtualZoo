@@ -23,7 +23,7 @@ public:
     ~Organism();
     void act();
     void physical_stimulus(std::string_view st);
-    sensor* sensorarray[8];
+    sensor* sensorarray[8]{};
     void visual_stimulus(const std::vector<Projection>& projections);
 
 private:
@@ -31,8 +31,8 @@ private:
     const std::string identifier;
     int energy;
     static constexpr int RETINA_RES=90;
-    std::array<int, RETINA_RES> retina_color;
-    std::array<double, RETINA_RES> retina_distance;
+    std::array<int, RETINA_RES> retina_color{};
+    std::array<double, RETINA_RES> retina_distance{};
 
     Organism_Manager& om;
 

@@ -57,7 +57,7 @@ float World::calculateRadians(float x, float y) const {
 }
 
 // Helper function to calculate the squared distance between two points
-float World::distanceSquared(float x1, float y1, float x2, float y2) const {
+float World::distanceSquared(const float x1, const float y1, const float x2, const float y2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
     return dx * dx + dy * dy;
@@ -117,6 +117,7 @@ bool World::raySegmentIntersection(float rayAngle, const Line& segment,
 struct AngleEvent {
     float angle;
     const Line* segment;
+    const Location* location;
     int locationIndex;  // To track which location this segment belongs to
     bool isEndpoint;    // True if this is an actual endpoint, false if it's an offset ray
     
@@ -221,12 +222,11 @@ void World::create_visual_impression(){
                 // If we had a previous segment, close it and create a projection
                 if (lastLocationIndex != -1 && lastAngle >= 0) {
                     // Get the color of the previous location
-                    int color = 0; // Default color
+                    Colour color = Constants::GREEN; // Default color
                     if (lastLocationIndex >= 0 && lastLocationIndex < (int)allLocs.size()) {
                         // You may need to add a method to get color from Location
                         // For now, using locationIndex as a simple color identifier
                         //TODO : implement proper color retrieval
-                        color = lastLocationIndex;
                     }
                     
                     projections.emplace_back(lastAngle, lastDepth, currentAngle, closestDist, color);
@@ -242,7 +242,7 @@ void World::create_visual_impression(){
     
     // Close the last projection if any
     if (lastLocationIndex != -1 && lastAngle >= 0) {
-        int color = lastLocationIndex;
+        Colour color = Constants::GREEN; // Default color
         // Close with a small angle increment
         projections.emplace_back(lastAngle, lastDepth, lastAngle + 0.001f, lastDepth, color);
     }

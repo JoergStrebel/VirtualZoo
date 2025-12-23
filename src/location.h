@@ -39,6 +39,7 @@ public:
     const Point& getBottomRight() const;
     const Rectangle& getArea();
     const Point& getTopLeft_new() const;
+    const Colour& getColor() const;
 };
 
 #endif

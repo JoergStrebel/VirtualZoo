@@ -53,5 +53,8 @@ const Rectangle& Location::getArea()
 const Point& Location::getTopLeft_new() const {
     return top_left_new;
 }
+const Colour& Location::getColor() const {
+    return color;
+}
 
 

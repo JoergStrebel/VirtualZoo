@@ -13,3 +13,5 @@ Locations::Locations()
 std::vector<Location*> Locations::getLocations() const {
     return allobjects;
 }
+
+

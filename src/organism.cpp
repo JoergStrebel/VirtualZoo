@@ -9,9 +9,8 @@
 #include "organism_manager.h"
 
 
-Organism::Organism(std::string_view id, Organism_Manager& manager): identifier(std::string(id)), om(manager) {
+Organism::Organism(const std::string_view id, Organism_Manager& manager): identifier(std::string(id)), om(manager) {
     this->energy = MAXENERGY;
-    this->risklevel = 0.0;  
     om.register_organism(this);
 
     //initialize the sensors

@@ -20,9 +20,12 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 
 # Finde SDL2 und SDL2_image
+FIND_PACKAGE( Boost 1.74 REQUIRED )
+INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(CGAL REQUIRED)
+
 
 # Quell-Dateien explizit angeben
 set(SOURCES
