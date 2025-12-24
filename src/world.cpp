@@ -5,9 +5,15 @@
 #include "constants.h"
 #include "sensor.h"
 #include <cmath>
-#include <list>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include "Projection.h"
+#include <CGAL/intersections.h>
+
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point_2 = K::Point_2;
+using Ray_2 = K::Ray_2;
+using Segment_2 = K::Segment_2;
+
 
 World::World()
 = default;
@@ -65,66 +71,29 @@ float World::distanceSquared(const float x1, const float y1, const float x2, con
 
 // Helper function to find ray-segment intersection
 // Returns true if intersection exists, and sets intersection point and distance
+// float& outX, float& outY, float& outDist are output parameters for intersection coordinates and distance
 bool World::raySegmentIntersection(float rayAngle, const Line& segment, 
                                    float& outX, float& outY, float& outDist) const {
-    float observerX = myOrgMan.x;
-    float observerY = myOrgMan.y;
-    
-    // Ray direction
-    float rayDirX = std::cos(rayAngle);
-    float rayDirY = std::sin(rayAngle);
-    
-    // Segment endpoints
-    float x1 = segment.p1.getX();
-    float y1 = segment.p1.getY();
-    float x2 = segment.p2.getX();
-    float y2 = segment.p2.getY();
-    
-    // Segment direction
-    float segDirX = x2 - x1;
-    float segDirY = y2 - y1;
-    
-    // Solve the parametric equations:
-    // observerX + t * rayDirX = x1 + u * segDirX
-    // observerY + t * rayDirY = y1 + u * segDirY
-    // where t >= 0 and 0 <= u <= 1
-    
-    float denominator = rayDirX * segDirY - rayDirY * segDirX;
-    
-    // Lines are parallel
-    if (std::abs(denominator) < 1e-10) {
-        return false;
+    const Point_2 rayOrigin(myOrgMan.x, myOrgMan.y);
+    const Point_2 rayDirection(std::cos(rayAngle), std::sin(rayAngle));
+    const Ray_2 ray(rayOrigin, rayDirection);
+
+    Segment_2 seg(Point_2(segment.p1.getX(), segment.p1.getY()),
+                  Point_2(segment.p2.getX(), segment.p2.getY()));
+
+    const auto result = CGAL::intersection(ray, seg);
+
+    if (result) {
+        if (const Point_2* p = std::get_if<Point_2>(&*result)) {
+            outX = p->x();
+            outY = p->y();
+            outDist = std::sqrt(CGAL::squared_distance(rayOrigin, *p));
+            return true;
+        }
     }
-    
-    float dx = x1 - observerX;
-    float dy = y1 - observerY;
-    
-    float u = (rayDirX * dy - rayDirY * dx) / denominator;
-    float t = (segDirX * dy - segDirY * dx) / denominator;
-    
-    // Check if intersection is valid
-    if (t >= 0 && u >= 0 && u <= 1) {
-        outX = observerX + t * rayDirX;
-        outY = observerY + t * rayDirY;
-        outDist = t;
-        return true;
-    }
-    
     return false;
 }
 
-// Structure to represent an angle event in the angular sweep
-struct AngleEvent {
-    float angle;
-    const Line* segment;
-    const Location* location;
-    int locationIndex;  // To track which location this segment belongs to
-    bool isEndpoint;    // True if this is an actual endpoint, false if it's an offset ray
-    
-    // Constructor
-    AngleEvent(float a, const Line* seg, int locIdx, bool isEnd = true) 
-        : angle(a), segment(seg), locationIndex(locIdx), isEndpoint(isEnd) {}
-};
 
 double World::normalize(double radvalue) {
     while (radvalue < 0) radvalue += 2.0 * Constants::PI;
@@ -143,12 +112,47 @@ double World::heading_to_rad(double heading) {
  * Uses an angular sweep algorithm to determine visible portions of line segments
  */
 void World::create_visual_impression(){
-    auto allLocs = allobjects.getLocations();
     std::vector<Projection> projections;
     std::vector<AngleEvent> angleEvents;
     
-    // Collect all line segments and create angle events
+    // Collect all angle events from locations
+    collectAngleEvents(angleEvents);
+
+    // Perform angular sweep
+    float lastAngle = -1.0f;
+    float lastDepth = -1.0f;
+    int lastLocationIndex = -1;
+
+    for (const auto& event : angleEvents) {
+        double currentAngle = normalize(event.angle);
+
+        // Find the closest intersection for this angle across all segments
+        float closestDist;
+        int closestLocationIndex = findClosestIntersection(currentAngle, closestDist);
+
+        // If we found an intersection and it's different from the last segment
+        addProjectionIfNeeded(projections, lastAngle, lastDepth, lastLocationIndex,
+                             currentAngle, closestDist, closestLocationIndex);
+    }
+
+    // Close the last projection if any
+    if (lastLocationIndex != -1 && lastAngle >= 0) {
+        Colour color = Constants::GREEN;
+        projections.emplace_back(lastAngle, lastDepth, lastAngle + 0.001f, lastDepth, color);
+    }
+
+    // Filter projections by field of view
+    std::vector<Projection> filteredProjections = filterProjectionsByFOV(projections);
+
+    // Hand over the projections to the organism as a visual stimulus
+    myOrg.visual_stimulus(filteredProjections);
+}
+
+// Collects all angle events from locations and sorts them by angle
+void World::collectAngleEvents(std::vector<AngleEvent>& angleEvents) {
+    const auto allLocs = allobjects.getLocations();
     int locationIndex = 0;
+
     for (Location* loc : allLocs) {
         Rectangle area = loc->getArea();
         
@@ -165,13 +169,6 @@ void World::create_visual_impression(){
             // Add events for both endpoints
             angleEvents.emplace_back(angle1, &line, locationIndex, true);
             angleEvents.emplace_back(angle2, &line, locationIndex, true);
-            
-            // Add slightly offset angles to handle edge cases
-            const float epsilon = 0.0001f;
-            angleEvents.emplace_back(angle1 - epsilon, &line, locationIndex, false);
-            angleEvents.emplace_back(angle1 + epsilon, &line, locationIndex, false);
-            angleEvents.emplace_back(angle2 - epsilon, &line, locationIndex, false);
-            angleEvents.emplace_back(angle2 + epsilon, &line, locationIndex, false);
         }
         locationIndex++;
     }
@@ -181,102 +178,84 @@ void World::create_visual_impression(){
               [](const AngleEvent& a, const AngleEvent& b) {
                   return a.angle < b.angle;
               });
-    
-    // Perform angular sweep
-    float lastAngle = -1.0f;
-    float lastDepth = -1.0f;
-    int lastLocationIndex = -1;
-    
-    for (const auto& event : angleEvents) {
-        double currentAngle = event.angle;
-        
-        // Normalize angle to [0, 2*PI)
-        currentAngle=normalize(currentAngle);
-        
-        // Find the closest intersection for this angle across all segments
-        float closestDist = std::numeric_limits<float>::infinity();
-        int closestLocationIndex = -1;
-        
-        locationIndex = 0;
-        for (Location* loc : allLocs) {
-            Rectangle area = loc->getArea();
-            
-            for (const Line& segment : area.sides) {
-                float intersectX, intersectY, intersectDist;
-                if (raySegmentIntersection(currentAngle, segment, intersectX, intersectY, intersectDist)) {
-                    if (intersectDist < closestDist) {
-                        closestDist = intersectDist;
-                        closestLocationIndex = locationIndex;
-                    }
+}
+
+// Finds the closest intersection for a given angle across all segments
+int World::findClosestIntersection(double currentAngle, float& outDist) {
+    const auto allLocs = allobjects.getLocations();
+    float closestDist = std::numeric_limits<float>::infinity();
+    int closestLocationIndex = -1;
+
+    int locationIndex = 0;
+    for (Location* loc : allLocs) {
+        Rectangle area = loc->getArea();
+
+        for (const Line& segment : area.sides) {
+            float intersectX, intersectY, intersectDist;
+            if (raySegmentIntersection(currentAngle, segment, intersectX, intersectY, intersectDist)) {
+                if (intersectDist < closestDist) {
+                    closestDist = intersectDist;
+                    closestLocationIndex = locationIndex;
                 }
             }
-            locationIndex++;
         }
-        
-        // If we found an intersection and it's different from the last segment
-        if (closestLocationIndex != -1) {
-            // If this is a new visible segment (different location or significant angle/depth change)
-            if (lastLocationIndex != closestLocationIndex || lastAngle < 0 ||
-                std::abs(currentAngle - lastAngle) > 0.001f) {
-                
-                // If we had a previous segment, close it and create a projection
-                if (lastLocationIndex != -1 && lastAngle >= 0) {
-                    // Get the color of the previous location
-                    Colour color = Constants::GREEN; // Default color
-                    if (lastLocationIndex >= 0 && lastLocationIndex < (int)allLocs.size()) {
-                        // You may need to add a method to get color from Location
-                        // For now, using locationIndex as a simple color identifier
-                        //TODO : implement proper color retrieval
-                    }
-                    
-                    projections.emplace_back(lastAngle, lastDepth, currentAngle, closestDist, color);
-                }
-                
-                // Start tracking this new visible segment
-                lastAngle = currentAngle;
-                lastDepth = closestDist;
-                lastLocationIndex = closestLocationIndex;
-            }
+        locationIndex++;
+    }
+
+    outDist = closestDist;
+    return closestLocationIndex;
+}
+
+// Adds a projection if the location changed or angle threshold exceeded
+void World::addProjectionIfNeeded(std::vector<Projection>& projections,
+                                   float& lastAngle, float& lastDepth, int& lastLocationIndex,
+                                   double currentAngle, float closestDist, int closestLocationIndex) {
+    if (closestLocationIndex == -1) return;
+
+    // If this is a new visible segment (different location or significant angle/depth change)
+    if (lastLocationIndex != closestLocationIndex || lastAngle < 0 ||
+        std::abs(currentAngle - lastAngle) > 0.001f) {
+
+        // If we had a previous segment, close it and create a projection
+        if (lastLocationIndex != -1 && lastAngle >= 0) {
+            Colour color = Constants::GREEN; // Default color
+            projections.emplace_back(lastAngle, lastDepth, currentAngle, closestDist, color);
         }
+
+        // Start tracking this new visible segment
+        lastAngle = currentAngle;
+        lastDepth = closestDist;
+        lastLocationIndex = closestLocationIndex;
     }
-    
-    // Close the last projection if any
-    if (lastLocationIndex != -1 && lastAngle >= 0) {
-        Colour color = Constants::GREEN; // Default color
-        // Close with a small angle increment
-        projections.emplace_back(lastAngle, lastDepth, lastAngle + 0.001f, lastDepth, color);
-    }
-    //Use the field_of_view to filter projections outside the view frustum
+}
+
+// Filters projections by the organism's field of view
+std::vector<Projection> World::filterProjectionsByFOV(const std::vector<Projection>& projections) {
     std::vector<Projection> filteredProjections;
     double halfFOVrad = myOrgMan.field_of_view_rad / 2.0;
     double orgHeadingRad = heading_to_rad(myOrgMan.heading);
     double leftBound = normalize(orgHeadingRad + halfFOVrad);
     double rightBound = normalize(orgHeadingRad - halfFOVrad);
 
-    //simple clipping operation on the projections
-    //TODO: not 100% correct for the case, when leftBound > rightBound (i.e. FOV crosses 0 rad)
-    //TODO: not 100% correct for the case, when clipping occurs because the depth at the clipped edge is different
+    // Simple clipping operation on the projections
+    // TODO: not 100% correct for the case, when leftBound > rightBound (i.e. FOV crosses 0 rad)
+    // TODO: not 100% correct for the case, when clipping occurs because the depth at the clipped edge is different
     for (const Projection& p : projections) {
-        //normal case
+        // Normal case
         if (p.startrad >= leftBound && p.endrad <= rightBound) {
             filteredProjections.push_back(p);
-        } else if (p.startrad < leftBound && p.endrad <= rightBound)
-        {
+        } else if (p.startrad < leftBound && p.endrad <= rightBound) {
             Projection clippedProj(leftBound, p.startdepth, p.endrad, p.enddepth, p.color);
             filteredProjections.push_back(clippedProj);
-        } else if (p.startrad >= leftBound && p.endrad > rightBound)
-        {
+        } else if (p.startrad >= leftBound && p.endrad > rightBound) {
             Projection clippedProj(p.startrad, p.startdepth, rightBound, p.enddepth, p.color);
             filteredProjections.push_back(clippedProj);
-        } else if (p.startrad < leftBound && p.endrad > rightBound)
-        {
+        } else if (p.startrad < leftBound && p.endrad > rightBound) {
             Projection clippedProj(leftBound, p.startdepth, rightBound, p.enddepth, p.color);
             filteredProjections.push_back(clippedProj);
         }
     }
 
-    // Hand over the projections to the organism as a visual stimulus
-    // Always hand over, even if vector is empty --> nothing to be seen
-    myOrg.visual_stimulus(filteredProjections);
+    return filteredProjections;
 }
 
