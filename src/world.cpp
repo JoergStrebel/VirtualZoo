@@ -69,17 +69,17 @@ float World::distanceSquared(const float x1, const float y1, const float x2, con
     return dx * dx + dy * dy;
 }
 
-// Helper function to find ray-segment intersection
+// Helper function to find ray-line intersection
 // Returns true if intersection exists, and sets intersection point and distance
 // float& outX, float& outY, float& outDist are output parameters for intersection coordinates and distance
-bool World::raySegmentIntersection(float rayAngle, const Line& segment, 
+bool World::rayLineIntersection(float rayAngle, const Line& line,
                                    float& outX, float& outY, float& outDist) const {
     const Point_2 rayOrigin(myOrgMan.x, myOrgMan.y);
     const Point_2 rayDirection(std::cos(rayAngle), std::sin(rayAngle));
     const Ray_2 ray(rayOrigin, rayDirection);
 
-    Segment_2 seg(Point_2(segment.p1.getX(), segment.p1.getY()),
-                  Point_2(segment.p2.getX(), segment.p2.getY()));
+    Segment_2 seg(Point_2(line.p1.getX(), line.p1.getY()),
+                  Point_2(line.p2.getX(), line.p2.getY()));
 
     const auto result = CGAL::intersection(ray, seg);
 
@@ -109,7 +109,7 @@ double World::heading_to_rad(double heading) {
 }
 
 /* Render the locations in the world as a visual impression for the organism
- * Uses an angular sweep algorithm to determine visible portions of line segments
+ * Uses an angular sweep algorithm to determine visible portions of lines in the world
  */
 void World::create_visual_impression(){
     std::vector<Projection> projections;
@@ -126,11 +126,11 @@ void World::create_visual_impression(){
     for (const auto& event : angleEvents) {
         double currentAngle = normalize(event.angle);
 
-        // Find the closest intersection for this angle across all segments
+        // Find the closest intersection for this angle across all lines
         float closestDist;
         int closestLocationIndex = findClosestIntersection(currentAngle, closestDist);
 
-        // If we found an intersection and it's different from the last segment
+        // If we found an intersection and it's different from the last line
         addProjectionIfNeeded(projections, lastAngle, lastDepth, lastLocationIndex,
                              currentAngle, closestDist, closestLocationIndex);
     }
@@ -155,6 +155,7 @@ void World::collectAngleEvents(std::vector<AngleEvent>& angleEvents) {
 
     for (Location* loc : allLocs) {
         Rectangle area = loc->getArea();
+        //TODO: get vertices of rectangle and create angle events for each vertex
         auto sides = area.getSides();
 
         for (const Line& line : sides) {
@@ -181,7 +182,7 @@ void World::collectAngleEvents(std::vector<AngleEvent>& angleEvents) {
               });
 }
 
-// Finds the closest intersection for a given angle across all segments
+// Finds the closest intersection for a given angle across all lines
 int World::findClosestIntersection(double currentAngle, float& outDist) {
     const auto allLocs = allobjects.getLocations();
     float closestDist = std::numeric_limits<float>::infinity();
@@ -192,9 +193,9 @@ int World::findClosestIntersection(double currentAngle, float& outDist) {
         Rectangle area = loc->getArea();
         auto sides = area.getSides();
 
-        for (const Line& segment : sides) {
+        for (const Line& line : sides) {
             float intersectX, intersectY, intersectDist;
-            if (raySegmentIntersection(currentAngle, segment, intersectX, intersectY, intersectDist)) {
+            if (rayLineIntersection(currentAngle, line, intersectX, intersectY, intersectDist)) {
                 if (intersectDist < closestDist) {
                     closestDist = intersectDist;
                     closestLocationIndex = locationIndex;
@@ -215,6 +216,7 @@ void World::addProjectionIfNeeded(std::vector<Projection>& projections,
     if (closestLocationIndex == -1) return;
 
     // If this is a new visible segment (different location or significant angle/depth change)
+    //TODO!!
     if (lastLocationIndex != closestLocationIndex || lastAngle < 0 ||
         std::abs(currentAngle - lastAngle) > 0.001f) {
 

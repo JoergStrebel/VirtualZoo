@@ -70,7 +70,7 @@ TEST(WorldTest, RaySegmentIntersection_Hit) {
     Line seg(p1, p2);
 
     float outX = 0, outY = 0, outDist = 0;
-    bool hit = w.raySegmentIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
+    bool hit = w.rayLineIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
     ASSERT_TRUE(hit);
     EXPECT_NEAR(outX, 5.0, 1e-4);
     EXPECT_NEAR(outY, 0.0, 1e-4);
@@ -88,7 +88,7 @@ TEST(WorldTest, RaySegmentIntersection_Miss) {
     Line seg(p1, p2);
 
     float outX = 0, outY = 0, outDist = 0;
-    bool hit = w.raySegmentIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
+    bool hit = w.rayLineIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
     EXPECT_FALSE(hit);
 }
 

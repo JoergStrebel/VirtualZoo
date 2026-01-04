@@ -10,10 +10,9 @@
 #include "organism_manager.h"
 
 // Structure to represent an angle event in the angular sweep
-// Please note: no line orientation - the events are not 
 struct AngleEvent {
     float angle;
-    const Line* segment;
+    const Line* segment; //TODO: not used anywhere - verify logic
     int locationIndex;  // To track which location this segment belongs to
     bool isEndpoint;    // True if this is an actual endpoint, false if it's an offset ray
 
@@ -48,7 +47,7 @@ private:
      //calculates squared distance between two points
     static float distanceSquared(float x1, float y1, float x2, float y2);
     //finds intersection between a ray and a line segment
-    bool raySegmentIntersection(float rayAngle, const Line& segment, 
+    bool rayLineIntersection(float rayAngle, const Line& line,
                                float& outX, float& outY, float& outDist) const;
     static double normalize(double radvalue);
     static double heading_to_rad(double heading);

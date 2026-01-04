@@ -19,7 +19,8 @@ public:
     CGAL_Vector_2 toVector() const;
 
 private:
-        
+        //TODO: line class should be based on CGAL::Segment_2 for better integration with CGAL functions
+
 };
 
 #endif // LINE_H
