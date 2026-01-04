@@ -155,8 +155,9 @@ void World::collectAngleEvents(std::vector<AngleEvent>& angleEvents) {
 
     for (Location* loc : allLocs) {
         Rectangle area = loc->getArea();
-        
-        for (const Line& line : area.sides) {
+        auto sides = area.getSides();
+
+        for (const Line& line : sides) {
             float x1 = line.p1.getX();
             float y1 = line.p1.getY();
             float x2 = line.p2.getX();
@@ -189,8 +190,9 @@ int World::findClosestIntersection(double currentAngle, float& outDist) {
     int locationIndex = 0;
     for (Location* loc : allLocs) {
         Rectangle area = loc->getArea();
+        auto sides = area.getSides();
 
-        for (const Line& segment : area.sides) {
+        for (const Line& segment : sides) {
             float intersectX, intersectY, intersectDist;
             if (raySegmentIntersection(currentAngle, segment, intersectX, intersectY, intersectDist)) {
                 if (intersectDist < closestDist) {

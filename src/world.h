@@ -10,6 +10,7 @@
 #include "organism_manager.h"
 
 // Structure to represent an angle event in the angular sweep
+// Please note: no line orientation - the events are not 
 struct AngleEvent {
     float angle;
     const Line* segment;
