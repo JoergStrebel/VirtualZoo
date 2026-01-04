@@ -1,5 +1,5 @@
 #include "Rectangle.h"
-#include "Line.h"
+#include "worldmodel/Line.h"
 
 Rectangle::Rectangle(const Line& l1, const Line& l2, const Line& l3, const Line& l4)
     : rectangle(linesToRectangle(l1, l2, l3, l4))

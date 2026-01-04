@@ -1,7 +1,7 @@
 #ifndef LINE_H
 #define LINE_H
 
-#include "Point.h"
+#include "worldmodel/Point.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;

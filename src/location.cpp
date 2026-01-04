@@ -5,9 +5,9 @@
 #include "constants.h"
 #include "sim_util.h"
 #include "colour.h"
-#include "Point.h"
-#include "Line.h"
-#include "Rectangle.h"
+#include "worldmodel/Point.h"
+#include "worldmodel/Line.h"
+#include "worldmodel/Rectangle.h"
 
 Location::Location(int px, int py, bool transp, int veg, std::string_view name, const Colour& col) :
     top_left(px, py),

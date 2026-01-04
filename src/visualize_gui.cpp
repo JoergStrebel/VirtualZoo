@@ -13,7 +13,7 @@
 #include <cmath>
 #include "locations.h"
 #include "location.h"
-#include "Point.h"
+#include "worldmodel/Point.h"
     
 visualize_gui::visualize_gui()
 {

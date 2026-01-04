@@ -6,9 +6,9 @@
 
 #include <string>
 #include "sim_util.h"
-#include "Point.h"
-#include "Line.h"
-#include "Rectangle.h"
+#include "worldmodel/Point.h"
+#include "worldmodel/Line.h"
+#include "worldmodel/Rectangle.h"
 #include "constants.h"
 #include "colour.h"
 #include <CGAL/Simple_cartesian.h>

@@ -1,7 +1,7 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include "Point.h"
+#include "worldmodel/Point.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <array>

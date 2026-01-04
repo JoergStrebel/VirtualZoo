@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "world.h"
-#include "Line.h"
-#include "Point.h"
+#include "worldmodel/Line.h"
+#include "worldmodel/Point.h"
 #include "constants.h"
 
 // Hinweis zum CGAL-Handling:

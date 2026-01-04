@@ -32,14 +32,14 @@ find_package(CGAL REQUIRED)
 set(SOURCES
         src/simcore.cpp
         src/appconfig.cpp
-        src/Line.cpp
+        src/worldmodel/Line.cpp
         src/location.cpp
         src/locations.cpp
         src/organism.cpp
         src/organism_manager.cpp
-        src/Point.cpp
+        src/worldmodel/Point.cpp
         src/Projection.cpp
-        src/Rectangle.cpp
+        src/worldmodel/Rectangle.cpp
         src/sensor.cpp
         src/sim_util.cpp
         src/visualize.cpp
