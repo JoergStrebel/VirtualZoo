@@ -9,19 +9,19 @@ Rectangle::Rectangle(const Line& l1, const Line& l2, const Line& l3, const Line&
 CGALRectangle Rectangle::linesToRectangle(const Line& l1, const Line& l2, const Line& l3, const Line& l4)
 {
     // Extract the corner points from the lines
-    // Lines are provided in order: top, right, bottom, left
+    // Lines are provided in order: top, right, bottom, left, clockwise orientation
     // Find min and max coordinates
-    CGAL_Point_2 p1(l1.p1.getX(), l1.p1.getY());
-    CGAL_Point_2 p2(l1.p2.getX(), l1.p2.getY());
-    CGAL_Point_2 p3(l2.p2.getX(), l2.p2.getY());
-    CGAL_Point_2 p4(l3.p1.getX(), l3.p1.getY());
+    CGAL_Point_2 p1(l1.getStartPoint().getX(), l1.getStartPoint().getY());
+    CGAL_Point_2 p2(l1.getEndPoint().getX(), l1.getEndPoint().getY());
+    CGAL_Point_2 p3(l2.getEndPoint().getX(), l2.getEndPoint().getY());
+    CGAL_Point_2 p4(l3.getEndPoint().getX(), l3.getEndPoint().getY());
 
     double minX = std::min({p1.x(), p2.x(), p3.x(), p4.x()});
     double maxX = std::max({p1.x(), p2.x(), p3.x(), p4.x()});
     double minY = std::min({p1.y(), p2.y(), p3.y(), p4.y()});
     double maxY = std::max({p1.y(), p2.y(), p3.y(), p4.y()});
 
-    return CGALRectangle(CGAL_Point_2(minX, minY), CGAL_Point_2(maxX, maxY));
+    return {CGAL_Point_2(minX, minY), CGAL_Point_2(maxX, maxY)};
 }
 
 const CGALRectangle& Rectangle::getGeometry() const

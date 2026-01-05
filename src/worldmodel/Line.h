@@ -5,7 +5,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Vector_2 CGAL_Vector_2;
+typedef Kernel::Segment_2 CGAL_Segment_2;
+typedef Kernel::Point_2 CGAL_Point_2;
 
 /**
  * Line segment defined by its starting and ending points
@@ -13,14 +14,12 @@ typedef Kernel::Vector_2 CGAL_Vector_2;
 class Line
 {
 public:
-    const Point p1;
-    const Point p2;
     Line(const Point& p1, const Point& p2);
-    CGAL_Vector_2 toVector() const;
+    Point getStartPoint() const;
+    Point getEndPoint() const;
 
 private:
-        //TODO: line class should be based on CGAL::Segment_2 for better integration with CGAL functions
-
+    const CGAL_Segment_2 segment;
 };
 
 #endif // LINE_H

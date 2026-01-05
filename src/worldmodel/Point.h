@@ -16,6 +16,7 @@ private:
 
 public:
     Point(double x, double y) : point(x, y) {}
+    Point(const CGAL_Point& p) : point(p) {}
 
     double getX() const { return point.x(); }
     double getY() const { return point.y(); }

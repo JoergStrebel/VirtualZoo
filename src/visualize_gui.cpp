@@ -224,8 +224,8 @@ void visualize_gui::drawimage(double x, double y, int frame, struct W_Image *ima
 	}
 	width = image->width;
 
-	dstrect.x = std::round(x);
-	dstrect.y = std::round(y);
+	dstrect.x = static_cast<int>(std::round(x));
+	dstrect.y = static_cast<int>(std::round(y));
 	dstrect.w = ICONSIZE;
 	dstrect.h = ICONSIZE;
 

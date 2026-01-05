@@ -32,7 +32,7 @@ private:
     
 public:
     int availableyield;
-    Location(int px, int py, bool transp, int veg, std::string_view name, const Colour& col);
+    Location(int px, int py, bool transp, int veg, std::string_view name, Colour  col);
     const std::string toString();    
     const std::string getName();
     const Point getTopLeft();
