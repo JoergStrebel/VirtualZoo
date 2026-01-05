@@ -5,6 +5,8 @@
 #include "constants.h"
 #include "sensor.h"
 #include <cmath>
+#include <limits>
+#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include "Projection.h"
 #include <CGAL/intersections.h>
@@ -31,8 +33,8 @@ void World::check_collisions(){
         sensor* currentsens = myOrg.sensorarray[i];
         
         //Calculate effective world coordinates of sensor
-        int x = std::round(myOrgMan.x)+Constants::ENTITYSIZE/2.0+currentsens->x;
-        int y = std::round(myOrgMan.y)+Constants::ENTITYSIZE/2.0+currentsens->y;
+        int x = static_cast<int>(std::round(myOrgMan.x)+Constants::ENTITYSIZE/2.0+currentsens->x);
+        int y = static_cast<int>(std::round(myOrgMan.y)+Constants::ENTITYSIZE/2.0+currentsens->y);
         
         //check collision between organism and world boundaries
         if (x<=0 ||
@@ -82,25 +84,93 @@ double World::heading_to_rad(double heading) {
     return normalize((angle / 360.0) * 2.0 * Constants::PI);
 }
 
+// Computes ray-line intersection with squared distance from organism position
+bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSquaredDistance) const {
+    // Create a ray originating from the organism's position at the given angle
+    Point_2 rayOrigin(myOrgMan.x, myOrgMan.y);
+
+    // Ray direction: cos(angle) for x, sin(angle) for y
+    double rayDirX = std::cos(rayAngle);
+    double rayDirY = std::sin(rayAngle);
+
+    Ray_2 ray(rayOrigin, K::Direction_2(rayDirX, rayDirY));
+
+    // Get the line segment
+    Point startPt = line.getStartPoint();
+    Point endPt = line.getEndPoint();
+    Segment_2 segment(CGAL_Point_2(startPt.getX(), startPt.getY()),
+                     CGAL_Point_2(endPt.getX(), endPt.getY()));
+
+    // Compute intersection using CGAL
+    auto intersection = CGAL::intersection(ray, segment);
+
+    if (!intersection) {
+        return false;
+    }
+
+    // Extract the intersection point
+    const Point_2* intersectionPoint = nullptr;
+    if (const Point_2* pt = std::get_if<Point_2>(&*intersection)) {
+        intersectionPoint = pt;
+    } else {
+        // If result is a segment (ray and line overlap), use the closer endpoint
+        if (const Segment_2* seg = std::get_if<Segment_2>(&*intersection)) {
+            intersectionPoint = &seg->point(0);
+        } else {
+            return false;
+        }
+    }
+
+    // Calculate squared distance from ray origin to intersection point
+    double dx = intersectionPoint->x() - myOrgMan.x;
+    double dy = intersectionPoint->y() - myOrgMan.y;
+    outSquaredDistance = dx * dx + dy * dy;
+
+    return true;
+}
+
 /* Render the locations in the world as a visual impression for the organism
- * Uses an angular sweep algorithm to determine visible portions of lines in the world
+ * Uses an angular sweep algorithm with a depth buffer to determine visible portions of lines in the world
+ * The depth buffer has ANGULAR_RESOLUTION (100) angular pixels, each representing a slice of 2π/100 radians
  */
 void World::create_visual_impression(){
-    std::vector<Projection> projections;
-    std::vector<AngleEvent> angleEvents;
-    
-    // Collect all angle events from locations
-    collectAngleEvents(angleEvents);
-
-    // Perform angular sweep
-    float lastAngle = -1.0f;
-    float lastDepth = -1.0f;
-    int lastLocationIndex = -1;
-
-    for (const auto& event : angleEvents) {
-        double currentAngle = normalize(event.angle);
-
+    // Initialize depth buffer: 100 pixels, each representing 2π/100 radians
+    std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
+    for (auto& pixel : depthBuffer) {
+        pixel.depth = std::numeric_limits<double>::infinity();
+        pixel.locationIndex = -1;  // -1 means no object
     }
+
+    const auto allLocs = allobjects.getLocations();
+
+    // Perform angular sweep: for each location, cast rays at each angular pixel
+    // and update depth buffer with nearest intersection
+    for (int pixelIdx = 0; pixelIdx < Constants::ANGULAR_RESOLUTION; ++pixelIdx) {
+        // Calculate angle for this pixel: pixel * (2π / ANGULAR_RESOLUTION)
+        double pixelAngle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * pixelIdx;
+
+        // Test intersection with all line segments from all locations
+        int locationIndex = 0;
+        for (Location* loc : allLocs) {
+            Rectangle area = loc->getArea();
+            auto sides = area.getSides();
+
+            for (const Line& line : sides) {
+                double squaredDistance = 0.0;
+                if (rayLineIntersection(pixelAngle, line, squaredDistance)) {
+                    // Update depth buffer if this is closer than current entry
+                    if (squaredDistance < depthBuffer[pixelIdx].depth) {
+                        depthBuffer[pixelIdx].depth = squaredDistance;
+                        depthBuffer[pixelIdx].locationIndex = locationIndex;
+                    }
+                }
+            }
+            locationIndex++;
+        }
+    }
+
+    // Build projections from depth buffer
+    std::vector<Projection> projections = buildProjectionsFromDepthBuffer(depthBuffer);
 
     // Filter projections by field of view
     std::vector<Projection> filteredProjections = filterProjectionsByFOV(projections);
@@ -109,47 +179,81 @@ void World::create_visual_impression(){
     myOrg.visual_stimulus(filteredProjections);
 }
 
-// Collects all angle events from locations and sorts them by angle
-void World::collectAngleEvents(std::vector<AngleEvent>& angleEvents) {
-    const auto allLocs = allobjects.getLocations();
-    int locationIndex = 0;
-
-    for (Location* loc : allLocs) {
-        Rectangle area = loc->getArea();
-        //TODO: get vertices of rectangle and create angle events for each vertex
-        auto sides = area.getSides();
-
-        for (const Line& line : sides) {
-            double x1 = line.getStartPoint().getX();
-            double y1 = line.getStartPoint().getY();
-            double x2 = line.getEndPoint().getX();
-            double y2 = line.getEndPoint().getY();
-            
-            // Calculate angles for both endpoints
-            double angle1 = calculateRadians(x1, y1);
-            double angle2 = calculateRadians(x2, y2);
-            
-            // Add events for both endpoints
-            angleEvents.emplace_back(angle1, &line, locationIndex, true);
-            angleEvents.emplace_back(angle2, &line, locationIndex, true);
-        }
-        locationIndex++;
-    }
-    
-    // Sort events by angle
-    std::sort(angleEvents.begin(), angleEvents.end(), 
-              [](const AngleEvent& a, const AngleEvent& b) {
-                  return a.angle < b.angle;
-              });
-}
-
 // Filters projections by the organism's field of view
-std::vector<Projection> World::filterProjectionsByFOV(const std::vector<Projection>& projections) {
+std::vector<Projection> World::filterProjectionsByFOV(const std::vector<Projection>& projections) const {
     std::vector<Projection> filteredProjections;
     double halfFOVrad = myOrgMan.field_of_view_rad / 2.0;
     double orgHeadingRad = heading_to_rad(myOrgMan.heading);
     double leftBound = normalize(orgHeadingRad + halfFOVrad);
     double rightBound = normalize(orgHeadingRad - halfFOVrad);
 
+    // TODO: Implement FOV filtering logic
+    return projections;
 }
 
+// Builds projection segments from the depth buffer
+std::vector<Projection> World::buildProjectionsFromDepthBuffer(const std::vector<DepthPixel>& depthBuffer) const {
+    std::vector<Projection> projections;
+    const auto allLocs = allobjects.getLocations();
+
+    int currentSegmentStart = -1;
+    int currentLocationIndex = -1;
+
+    // Iterate through all pixels and group consecutive pixels with the same location
+    for (int pixelIdx = 0; pixelIdx < Constants::ANGULAR_RESOLUTION; ++pixelIdx) {
+        const DepthPixel& pixel = depthBuffer[pixelIdx];
+
+        // Skip pixels with no object
+        if (pixel.locationIndex == -1) {
+            // If we had an active segment, finalize it
+            if (currentSegmentStart != -1) {
+                // Create projection from the completed segment
+                int segmentEnd = pixelIdx - 1;
+                double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
+                double endRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * (segmentEnd + 1);
+                double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
+                double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
+
+                const Colour& locColor = allLocs[currentLocationIndex]->getColor();
+                projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
+
+                currentSegmentStart = -1;
+                currentLocationIndex = -1;
+            }
+        } else {
+            // We have an object at this pixel
+            if (currentSegmentStart == -1) {
+                // Start a new segment
+                currentSegmentStart = pixelIdx;
+                currentLocationIndex = pixel.locationIndex;
+            } else if (pixel.locationIndex != currentLocationIndex) {
+                // Location changed - finalize previous segment and start new one
+                int segmentEnd = pixelIdx - 1;
+                double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
+                double endRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * (segmentEnd + 1);
+                double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
+                double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
+
+                const Colour& locColor = allLocs[currentLocationIndex]->getColor();
+                projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
+
+                currentSegmentStart = pixelIdx;
+                currentLocationIndex = pixel.locationIndex;
+            }
+        }
+    }
+
+    // Handle the final segment if it extends to the end of the buffer
+    if (currentSegmentStart != -1) {
+        int segmentEnd = Constants::ANGULAR_RESOLUTION - 1;
+        double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
+        double endRad = 2.0 * Constants::PI;  // wrap around to 0
+        double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
+        double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
+
+        const Colour& locColor = allLocs[currentLocationIndex]->getColor();
+        projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
+    }
+
+    return projections;
+}

@@ -23,7 +23,8 @@ namespace Constants
     const Colour WHITE = Colour(255, 255, 255, "white");
     const Colour GREEN = Colour(69, 120, 8, "green");
     const double UNLIMITEDSIGHTDISTANCE = -1.0; //use negative value for unlimited sight distance
-    
+    const int ANGULAR_RESOLUTION = 100;  // 1D screen resolution: 100 angular pixels
+
 }
 #endif
 

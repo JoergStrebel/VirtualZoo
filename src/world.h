@@ -53,8 +53,25 @@ private:
     void create_visual_impression();
 
     // Helper functions for create_visual_impression refactoring
-    void collectAngleEvents(std::vector<AngleEvent>& angleEvents);
-    std::vector<Projection> filterProjectionsByFOV(const std::vector<Projection>& projections);
+    [[nodiscard]] std::vector<Projection> filterProjectionsByFOV(const std::vector<Projection>& projections) const;
+
+     // Depth buffer and projection building
+    struct DepthPixel {
+        double depth;          // squared distance from CGAL intersection
+        int locationIndex;     // index of the visible location (-1 if no object)
+    };
+
+    /**
+     * Computes the ray-based squared distance intersection between a ray at a given angle
+     * and a line segment. Returns true if intersection exists, false otherwise.
+     */
+    [[nodiscard]] bool rayLineIntersection(double rayAngle, const Line& line, double& outSquaredDistance) const;
+
+    /**
+     * Builds projection segments from the depth buffer by grouping consecutive pixels
+     * with the same visible location.
+     */
+    [[nodiscard]] std::vector<Projection> buildProjectionsFromDepthBuffer(const std::vector<DepthPixel>& depthBuffer) const;
 
 #ifdef UNIT_TEST
 #include <gtest/gtest.h>
@@ -69,6 +86,8 @@ private:
     FRIEND_TEST(WorldTest, DistanceSquared_Basic);
     FRIEND_TEST(WorldTest, Normalize_Basic);
     FRIEND_TEST(WorldTest, HeadingToRad_Basic);
+    FRIEND_TEST(WorldTest, RaySegmentIntersection_Hit);
+    FRIEND_TEST(WorldTest, RaySegmentIntersection_Miss);
 #endif
 };
 

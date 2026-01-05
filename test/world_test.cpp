@@ -65,16 +65,15 @@ TEST(WorldTest, RaySegmentIntersection_Hit) {
     w.myOrgMan.y = 0.0;
 
     // Segment vertical at x=5 from y=-1..1
-    Point p1(5.0, -1.0);
+    Point p1(5.0, -1.0); //TODO
     Point p2(5.0, 1.0);
     Line seg(p1, p2);
 
-    float outX = 0, outY = 0, outDist = 0;
-    bool hit = w.rayLineIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
+    double outSquaredDist = 0;
+    bool hit = w.rayLineIntersection(0.0 /* angle 0 => +X axis */, seg, outSquaredDist);
     ASSERT_TRUE(hit);
-    EXPECT_NEAR(outX, 5.0, 1e-4);
-    EXPECT_NEAR(outY, 0.0, 1e-4);
-    EXPECT_NEAR(outDist, 5.0, 1e-4);
+    // Intersection at (5, 0), so squared distance should be 25
+    EXPECT_NEAR(outSquaredDist, 25.0, 1e-4);
 }
 
 TEST(WorldTest, RaySegmentIntersection_Miss) {
@@ -87,8 +86,8 @@ TEST(WorldTest, RaySegmentIntersection_Miss) {
     Point p2(-5.0, 1.0);
     Line seg(p1, p2);
 
-    float outX = 0, outY = 0, outDist = 0;
-    bool hit = w.rayLineIntersection(0.0f /* angle 0 => +X axis */, seg, outX, outY, outDist);
+    double outSquaredDist = 0;
+    bool hit = w.rayLineIntersection(0.0 /* angle 0 => +X axis */, seg, outSquaredDist);
     EXPECT_FALSE(hit);
 }
 

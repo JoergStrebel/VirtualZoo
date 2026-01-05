@@ -28,9 +28,8 @@ find_package(SDL2_image REQUIRED)
 find_package(CGAL REQUIRED)
 
 
-# Quell-Dateien explizit angeben
+# Quell-Dateien explizit angeben (ohne simcore.cpp which is main)
 set(SOURCES
-        src/simcore.cpp
         src/appconfig.cpp
         src/worldmodel/Line.cpp
         src/location.cpp
@@ -47,10 +46,13 @@ set(SOURCES
         src/world.cpp
 )
 
-# Zieldefinition
-add_executable(simcore ${SOURCES})
-# Linker-Optionen
-target_link_libraries(simcore PRIVATE SDL2::SDL2 SDL2_image::SDL2_image pthread CGAL::CGAL)
+# Create a library from the source files
+add_library(simcore_lib STATIC ${SOURCES})
+target_link_libraries(simcore_lib PUBLIC SDL2::SDL2 SDL2_image::SDL2_image pthread CGAL::CGAL)
+
+# Zieldefinition for executable
+add_executable(simcore src/simcore.cpp)
+target_link_libraries(simcore PRIVATE simcore_lib)
 
 enable_testing()
 
@@ -61,6 +63,7 @@ add_executable(
 target_link_libraries(
         organism_test
         GTest::gtest_main
+        simcore_lib
 )
 
 include(GoogleTest)
@@ -73,11 +76,12 @@ add_executable(
 )
 # Define UNIT_TEST for the test compilation so FRIEND_TEST is active
 target_compile_definitions(world_test PRIVATE UNIT_TEST)
-# Link against gtest and CGAL (tests use CGAL-based Point/Line)
+# Link against gtest, CGAL, and simcore_lib
 target_link_libraries(
     world_test
     GTest::gtest_main
     CGAL::CGAL
+    simcore_lib
 )
 # Register with CTest
 gtest_discover_tests(world_test)
