@@ -1,6 +1,5 @@
 # Hohe Prio: Simulationsdesign
 ## Konkrete nächste Schritte
-- Nutze CGAL und ersetze die geometrischen Primitiven Point, Line, ... 
 - Implementiere Methode World::create_visual_impression()
 - Schreibe Unit-Tests für World::create_visual_impression() und für die Projection-Erzeugung
 - Methoden im Organismus_Manager schreiben, die die Rectangles auf die Retina abbilden

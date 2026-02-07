@@ -135,7 +135,7 @@ bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSq
  */
 void World::create_visual_impression(){
     // Initialize depth buffer: 100 pixels, each representing 2π/100 radians
-    std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
+    const std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
     for (auto& pixel : depthBuffer) {
         pixel.depth = std::numeric_limits<double>::infinity();
         pixel.locationIndex = -1;  // -1 means no object
@@ -168,92 +168,13 @@ void World::create_visual_impression(){
             locationIndex++;
         }
     }
-
-    // Build projections from depth buffer
-    std::vector<Projection> projections = buildProjectionsFromDepthBuffer(depthBuffer);
-
-    // Filter projections by field of view
-    std::vector<Projection> filteredProjections = filterProjectionsByFOV(projections);
+    // trim the depth buffer to only include pixels within the organism's field of view (FOV)
+    const std::vector<DepthPixel> culledDepthBuffer = trimDepthBufferByFOV(depthBuffer);
 
     // Hand over the projections to the organism as a visual stimulus
-    myOrg.visual_stimulus(filteredProjections);
+    myOrg.visual_stimulus(depthBuffer);
 }
 
-// Filters projections by the organism's field of view
-std::vector<Projection> World::filterProjectionsByFOV(const std::vector<Projection>& projections) const {
-    std::vector<Projection> filteredProjections;
-    double halfFOVrad = myOrgMan.field_of_view_rad / 2.0;
-    double orgHeadingRad = heading_to_rad(myOrgMan.heading);
-    double leftBound = normalize(orgHeadingRad + halfFOVrad);
-    double rightBound = normalize(orgHeadingRad - halfFOVrad);
+std::vector<DepthPixel> World::trimDepthBufferByFOV(const std::vector<DepthPixel>) const {
 
-    // TODO: Implement FOV filtering logic
-    return projections;
-}
-
-// Builds projection segments from the depth buffer
-std::vector<Projection> World::buildProjectionsFromDepthBuffer(const std::vector<DepthPixel>& depthBuffer) const {
-    std::vector<Projection> projections;
-    const auto allLocs = allobjects.getLocations();
-
-    int currentSegmentStart = -1;
-    int currentLocationIndex = -1;
-
-    // Iterate through all pixels and group consecutive pixels with the same location
-    for (int pixelIdx = 0; pixelIdx < Constants::ANGULAR_RESOLUTION; ++pixelIdx) {
-        const DepthPixel& pixel = depthBuffer[pixelIdx];
-
-        // Skip pixels with no object
-        if (pixel.locationIndex == -1) {
-            // If we had an active segment, finalize it
-            if (currentSegmentStart != -1) {
-                // Create projection from the completed segment
-                int segmentEnd = pixelIdx - 1;
-                double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
-                double endRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * (segmentEnd + 1);
-                double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
-                double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
-
-                const Colour& locColor = allLocs[currentLocationIndex]->getColor();
-                projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
-
-                currentSegmentStart = -1;
-                currentLocationIndex = -1;
-            }
-        } else {
-            // We have an object at this pixel
-            if (currentSegmentStart == -1) {
-                // Start a new segment
-                currentSegmentStart = pixelIdx;
-                currentLocationIndex = pixel.locationIndex;
-            } else if (pixel.locationIndex != currentLocationIndex) {
-                // Location changed - finalize previous segment and start new one
-                int segmentEnd = pixelIdx - 1;
-                double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
-                double endRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * (segmentEnd + 1);
-                double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
-                double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
-
-                const Colour& locColor = allLocs[currentLocationIndex]->getColor();
-                projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
-
-                currentSegmentStart = pixelIdx;
-                currentLocationIndex = pixel.locationIndex;
-            }
-        }
-    }
-
-    // Handle the final segment if it extends to the end of the buffer
-    if (currentSegmentStart != -1) {
-        int segmentEnd = Constants::ANGULAR_RESOLUTION - 1;
-        double startRad = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * currentSegmentStart;
-        double endRad = 2.0 * Constants::PI;  // wrap around to 0
-        double startDepth = std::sqrt(depthBuffer[currentSegmentStart].depth);
-        double endDepth = std::sqrt(depthBuffer[segmentEnd].depth);
-
-        const Colour& locColor = allLocs[currentLocationIndex]->getColor();
-        projections.emplace_back(startRad, startDepth, endRad, endDepth, locColor);
-    }
-
-    return projections;
 }

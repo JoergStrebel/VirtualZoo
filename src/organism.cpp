@@ -4,7 +4,6 @@
 #include "organism.h"
 #include <iostream>
 #include "constants.h"
-#include "sim_util.h"
 #include "sensor.h"
 #include "organism_manager.h"
 
@@ -87,18 +86,19 @@ bool Organism::detect_collision(){
 
 void Organism::recognize(){}
 
-void Organism::visual_stimulus(const std::vector<Projection>& projections){
+// receiver mehod for the visual stimulus, which is an array of depth pixels, each containing
+// the distance to the nearest object in that direction and
+// the color of that object
+// the array is already trimmed to the field of view of the organism, so it only contains the pixels that are visible to the organism
+void Organism::visual_stimulus(std::vector<int>& world_color, std::vector<double> world_distance){
     std::cout << "Received visual stimulus: " << std::endl;
     //erase previous retina content
     retina_color.fill(0);
     retina_distance.fill(Constants::UNLIMITEDSIGHTDISTANCE);
 
-    // TODO: translate the projections onto pixels on the retina - depth mapping, pixel rendering
+    // TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
     // std::array<int, RETINA_RES> retina_color;
     // std::array<double, RETINA_RES> retina_distance;
-    // What is my view frustrum / view angle?
-    for (Projection p : projections) {
 
-    }
 }
 
