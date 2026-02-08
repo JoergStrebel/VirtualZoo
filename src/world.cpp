@@ -27,13 +27,13 @@ void World::run_world(){
 
 void World::check_collisions(){
 
-    auto allLocs = allobjects.getLocations();    
+    std::vector<Location*> allLocs = allobjects.getLocations();
     for(int i=0;i<=7;i++){
         sensor* currentsens = myOrg.sensorarray[i];
         
         //Calculate effective world coordinates of sensor
-        int x = static_cast<int>(std::round(myOrgMan.x)+Constants::ENTITYSIZE/2.0+currentsens->x);
-        int y = static_cast<int>(std::round(myOrgMan.y)+Constants::ENTITYSIZE/2.0+currentsens->y);
+        int x = static_cast<int>(std::round(myOrgMan.x)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens->x));
+        int y = static_cast<int>(std::round(myOrgMan.y)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens->y));
         
         //check collision between organism and world boundaries
         if (x<=0 ||
@@ -64,7 +64,7 @@ double World::calculateRadians(double x, double y) const {
 }
 
 // Helper function to calculate the squared distance between two points
-float World::distanceSquared(const float x1, const float y1, const float x2, const float y2) {
+float World::distanceSquared(const double x1, const double y1, const double x2, const double y2) {
     float dx = x2 - x1;
     float dy = y2 - y1;
     return dx * dx + dy * dy;

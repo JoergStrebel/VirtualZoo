@@ -17,7 +17,7 @@ Organism::Organism(const std::string_view id, Organism_Manager& manager): identi
  //the following coordinates are entity coordinates in world pixels 
  //(0,0) denotes the center of the entity.
  // the real, absolute pixel address is then x+shiftcenter+sensor.x
- int shiftcenter = -1*Constants::ENTITYSIZE/2; //-32
+ constexpr int shiftcenter = -1*Constants::ENTITYSIZE/2; //-32
  sensorarray[0] = new sensor("pressure", "p0", 5+shiftcenter, 2+shiftcenter);
  sensorarray[1] = new sensor("pressure", "p1", 12+shiftcenter, 1+shiftcenter);
  sensorarray[2] = new sensor("pressure", "p2", 20+shiftcenter, 1+shiftcenter);
@@ -36,14 +36,12 @@ void Organism::eat() {
 }
 
 void Organism::act() {
-    
-    std::pair<int, int> stimdir;
-    int addx=0;
-    int addy=0;
-    
     //check for received stimuli
     if (detect_collision()) {
-    //Primitive behaviour: if you collide, turn around.
+        int addy=0;
+        int addx=0;
+        std::pair<int, int> stimdir;
+        //Primitive behaviour: if you collide, turn around.
 
     //let the Organism_Manager do the calculations
         for (const std::string& stimulus : allstimuli)
@@ -66,7 +64,7 @@ void Organism::physical_stimulus(const std::string_view st){
     allstimuli.emplace_back(st);
 }
 
-std::pair<int,int> Organism::getStimulusDirection(const std::string_view id_object){
+std::pair<int,int> Organism::getStimulusDirection(const std::string_view id_object) const {
      for(int i=0;i<=7;i++){
         sensor* currentsens = this->sensorarray[i];
         if (currentsens->get_id()==id_object) return std::make_pair(currentsens->x, currentsens->y);
@@ -80,7 +78,7 @@ void Organism::step_forward(){
 
 void Organism::move_towards(const double visual_direction){}
 
-bool Organism::detect_collision(){
+bool Organism::detect_collision() const {
     return !allstimuli.empty();
 }
 

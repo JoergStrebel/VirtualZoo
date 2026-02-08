@@ -40,12 +40,12 @@ private:
     void recognize();    
     void move_towards(double visual_direction);
     void step_forward();
-    bool detect_collision();
+    bool detect_collision() const;
         
     std::vector<std::string> allstimuli;    
     
     //get the direction of the stimulus in centered entity coordinates (0,0) is in the middle of the entity
-    std::pair<int,int> getStimulusDirection(std::string_view id_object);
+    std::pair<int,int> getStimulusDirection(std::string_view id_object) const;
 };
 
 #endif // ORGANISM_H

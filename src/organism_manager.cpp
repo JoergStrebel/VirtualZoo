@@ -15,9 +15,9 @@ Organism_Manager::Organism_Manager(){
 
 void Organism_Manager::move() {
     //transform into standard radian angle
-    double deltay = stepsize*std::cos(heading);
+    const double deltay = stepsize*std::cos(heading);
     y=y-deltay; //y-axis is inverted
-    double deltax = stepsize*std::sin(heading);
+    const double deltax = stepsize*std::sin(heading);
     x=x+deltax;
     //std::cout << "Step: " << deltax << ", " << deltay << std::endl;
 }
@@ -29,7 +29,7 @@ void Organism_Manager::turn(const double radians) {
 }
 
 void Organism_Manager::turn_around(int addx, int addy){
-    double headingdiff = determine_opposite_direction(addx, addy);
+    const double headingdiff = determine_opposite_direction(addx, addy);
     this->turn(headingdiff);
 }
 
@@ -46,15 +46,15 @@ double Organism_Manager::determine_opposite_direction(int addx, int addy) const 
         // arctan2 liefert -pi ... pi 
         //see https://en.cppreference.com/w/cpp/numeric/math/atan2
         // we need -addy because the y-axis is inverted
-        double radAngle = std::atan2((double)-addy, (double)addx); // -pi ... pi radians
-        double OppHeading = radAngle + Constants::PI; // add pi to get the opposite direction, still in -pi ... pi
-        double normOppHeading = util.normalize(OppHeading); // normalize to 0 ... 2pi radians
+        const double radAngle = std::atan2(static_cast<double>(-addy), static_cast<double>(addx)); // -pi ... pi radians
+        const double OppHeading = radAngle + Constants::PI; // add pi to get the opposite direction, still in -pi ... pi
+        const double normOppHeading = util.normalize(OppHeading); // normalize to 0 ... 2pi radians
         return normOppHeading-heading;
 }
 
 void Organism_Manager::getFoV(double& leftBound, double& rightBound) const {
     // Calculate left and right bounds of the field of view based on current heading
-    double halfFoV = field_of_view_rad / 2.0;
+    constexpr double halfFoV = field_of_view_rad / 2.0;
 
     leftBound = util.normalize(heading - halfFoV);
     rightBound = util.normalize(heading + halfFoV);

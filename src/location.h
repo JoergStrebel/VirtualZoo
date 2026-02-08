@@ -29,15 +29,15 @@ private:
     const Rectangle area;
     const Colour color;
     Point top_left_new;
+    int availableyield;
     
 public:
-    int availableyield;
     Location(int px, int py, bool transp, int veg, std::string_view name, Colour  col);
-    const std::string toString();    
-    const std::string getName();
-    const Point getTopLeft();
+    std::string toString() const;
+    std::string getName() const;
+    const Point& getTopLeft() const;
     const Point& getBottomRight() const;
-    const Rectangle& getArea();
+    const Rectangle& getArea() const;
     const Point& getTopLeft_new() const;
     const Colour& getColor() const;
 };

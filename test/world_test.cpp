@@ -16,7 +16,7 @@
 // (Option A). Daher können wir private Hilfsfunktionen direkt aufrufen.
 
 // Toleranz für Fließkomma-Vergleiche
-static const double EPS = 1e-6;
+static constexpr double EPS = 1e-6;
 
 TEST(WorldTest, CalculateRadians_Basic) {
     World w;
@@ -25,38 +25,29 @@ TEST(WorldTest, CalculateRadians_Basic) {
     w.myOrgMan.y = 0.0;
 
     // Punkt auf +X-Achse -> atan2(0,1) == 0
-    EXPECT_NEAR(w.calculateRadians(1.0f, 0.0f), 0.0, EPS);
+    EXPECT_NEAR(w.calculateRadians(1.0, 0.0), 0.0, EPS);
     // Punkt auf +Y-Achse -> atan2(1,0) == pi/2
-    EXPECT_NEAR(w.calculateRadians(0.0f, 1.0f), Constants::PI/2.0, EPS);
+    EXPECT_NEAR(w.calculateRadians(0.0, 1.0), Constants::PI/2.0, EPS);
 }
 
 TEST(WorldTest, DistanceSquared_Basic) {
     World w;
-    double d = w.distanceSquared(1.0f, 2.0f, 4.0f, 4.0f); // dx=3, dy=2 -> 9+4=13
+    double d = w.distanceSquared(1.0, 2.0, 4.0, 4.0); // dx=3, dy=2 -> 9+4=13
     EXPECT_NEAR(d, 13.0, EPS);
 }
 
 TEST(WorldTest, Normalize_Basic) {
     World w;
-    double res = World::normalize(-Constants::PI/2.0);
+    sim_util util;
+    double res = util.normalize(-Constants::PI/2.0);
     // -pi/2 normalized -> 3*pi/2
     EXPECT_NEAR(res, 3.0 * Constants::PI / 2.0, EPS);
 
     // value already in [0,2pi) unchanged
-    double val = World::normalize(Constants::PI);
+    double val = util.normalize(Constants::PI);
     EXPECT_NEAR(val, Constants::PI, EPS);
 }
 
-TEST(WorldTest, HeadingToRad_Basic) {
-    World w;
-    // Per implementation: heading 0 => maps to north => pi/2
-    double rad = World::heading_to_rad(0.0);
-    EXPECT_NEAR(rad, Constants::PI/2.0, EPS);
-
-    // heading 90 -> east -> 0 rad after conversion and normalize
-    double rad90 = World::heading_to_rad(90.0);
-    EXPECT_NEAR(rad90, 0.0, EPS);
-}
 
 TEST(WorldTest, RaySegmentIntersection_Hit) {
     World w;

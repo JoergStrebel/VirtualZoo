@@ -52,11 +52,10 @@ private:
     const int SCREEN_HEIGHT = SCREEN_WIDTH;
 
     //scaling factors for transforming World coordinates to GUI coordinates
-    const float SCALE_WIDTH = float(SCREEN_WIDTH)/float(Constants::MAXX);
+    const float SCALE_WIDTH = static_cast<float>(SCREEN_WIDTH)/static_cast<float>(Constants::MAXX);
 
     //fixed image size
-    const int ICONSIZE = (int)std::round(float(Constants::ENTITYSIZE)*SCALE_WIDTH);
-
+    const int ICONSIZE = static_cast<int>(std::round(static_cast<float>(Constants::ENTITYSIZE)*SCALE_WIDTH));
     SDL_Renderer *renderer;
     std::string windowtitle = "VirtualZoo World View";
 
@@ -77,11 +76,11 @@ private:
 
     std::map<std::string, struct W_Image *> imgrepo;
 
-    SDL_Texture* loadTexture( std::string path );
+    SDL_Texture* loadTexture(const std::string &path ) const;
     void drawpoint(unsigned int x, unsigned int y, const struct color& color);
     void clearscreen(void);
     void updatedisplay(void);
-    void drawimage(double x, double y, int frame, struct W_Image *image, double heading);
+    void drawimage(double x, double y, int frame, const struct W_Image *image, double heading);
     void drawrect(int x, int y, int w, int h, const struct color& color);
     std::pair<int,int>  getTextureDetails(SDL_Texture* texture);
 

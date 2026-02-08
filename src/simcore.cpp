@@ -7,12 +7,9 @@
 
 int main(int argc, char **argv)
 {
-    
     World myWorld;
-    visualize* myVis;
     appconfig simconfig;
-    
-    myVis = new visualize_gui();
+    std::unique_ptr<visualize> myVis;
 
     //Load media
     if( !myVis->init() )
@@ -30,7 +27,7 @@ int main(int argc, char **argv)
     
     //main simulation loop - everything happens here
     bool quit = false;
-    while( quit == false )
+    while( !quit )
     {
         quit = myVis->check_exit();
         myWorld.run_world();
@@ -39,8 +36,6 @@ int main(int argc, char **argv)
         //slow down
         usleep(1000);
     }
-    
-    delete(myVis);
     
     return 0;
 

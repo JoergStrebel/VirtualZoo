@@ -18,11 +18,11 @@ sensor::~sensor()
 }
 
 
-const std::string sensor::get_id() const {
+std::string sensor::get_id() const {
     return identifier;
 }
 
-const std::string sensor::get_type() const {
+std::string sensor::get_type() const {
     return typedesc;
 }
 

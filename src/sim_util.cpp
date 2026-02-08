@@ -16,7 +16,7 @@ int sim_util::randomint(const int minval, const int maxval){
 }
 
 double sim_util::normalize(double radvalue) const {
-        while (radvalue < 0) radvalue += 2.0 * Constants::PI;
-        while (radvalue >= 2.0 * Constants::PI) radvalue -= ((double)2.0) * Constants::PI;
+        while (radvalue < 0.0) radvalue += 2.0 * Constants::PI;
+        while (radvalue >= 2.0 * Constants::PI) radvalue -= (2.0 * Constants::PI);
         return radvalue;
 }

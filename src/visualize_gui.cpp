@@ -49,7 +49,6 @@ visualize_gui::~visualize_gui()
 bool visualize_gui::load_media(const appconfig& values)
 {            
     bool success = true;
-    struct W_Image * tmpimg;
     
     //Initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
@@ -59,20 +58,20 @@ bool visualize_gui::load_media(const appconfig& values)
         success = false;
     }
     
-	for(auto const key : values.get_keys())
+	for(const std::string& key : values.get_keys())
 	{		
 		const std::string path = values.get(key);
 		SDL_Log( "SDL_image: Loading image: %s\n", path.c_str());
 		//Load PNG texture
 		SDL_Texture*  gPNGTexture = loadTexture( path );
-		if( gPNGTexture == NULL )
+		if( gPNGTexture == nullptr )
 		{
 			SDL_Log( "Failed to load PNG image!\n" );
 			success = false;
 		}
 
     	//store it
-    	tmpimg = new struct W_Image();
+    	struct W_Image * tmpimg = new struct W_Image();
 		tmpimg->texture = gPNGTexture;
     	tmpimg->framecount = 1;
 
@@ -95,16 +94,13 @@ std::pair<int,int> visualize_gui::getTextureDetails(SDL_Texture* texture){
     return std::pair<int,int>{w,h};
 }
 
-SDL_Texture* visualize_gui::loadTexture( std::string path )
-{
-
+SDL_Texture* visualize_gui::loadTexture(const std::string &path ) const {
 	//Load image at specified path
 	SDL_Texture* loadedTexture = IMG_LoadTexture(renderer,  path.c_str() );
-	if( loadedTexture == NULL )
+	if( loadedTexture == nullptr )
 	{
 		SDL_Log( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
 	}
-
 	return loadedTexture;
 }
 
@@ -147,8 +143,6 @@ bool visualize_gui::check_exit()
 
 bool visualize_gui::init()
 {
-	Uint32 flags;
-
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
         	fprintf(stderr, "Couldn't init video: %s\n", SDL_GetError());
         	exit(1);
@@ -156,7 +150,7 @@ bool visualize_gui::init()
 
 	atexit(SDL_Quit);
 
-    flags = SDL_WINDOW_SHOWN;
+    Uint32 flags = SDL_WINDOW_SHOWN;
     gWindow = SDL_CreateWindow(windowtitle.c_str(), SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
 
@@ -209,9 +203,9 @@ void visualize_gui::updatedisplay(void)
  * It is assumed that the frames are stacked, i.e. the different frames can be addressed using the height parameter
  * /parameter frame : index of frame to be drawn; 0-based
  */
-void visualize_gui::drawimage(double x, double y, int frame, struct W_Image *image, double heading)
+void visualize_gui::drawimage(double x, double y, int frame, const struct W_Image *image, double heading)
 {
-	int height, width;
+	int height=0;
 	SDL_Rect srcrect, dstrect;
 
 	if (frame == 0) {
@@ -222,7 +216,7 @@ void visualize_gui::drawimage(double x, double y, int frame, struct W_Image *ima
 		height = image->height;
 		frame = frame % image->framecount;
 	}
-	width = image->width;
+	int width = image->width;
 
 	dstrect.x = static_cast<int>(std::round(x));
 	dstrect.y = static_cast<int>(std::round(y));

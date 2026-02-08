@@ -46,7 +46,7 @@ private:
     [[nodiscard]] double calculateRadians(double x, double y) const;
 
      //calculates squared distance between two points
-    static float distanceSquared(float x1, float y1, float x2, float y2);
+    static float distanceSquared(double x1, double y1, double x2, double y2);
 
      //supplies the organism with a world view
     void create_visual_impression();

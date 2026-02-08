@@ -21,7 +21,7 @@ public:
     void getFoV(double& leftBound, double& rightBound) const; //calculate the left and right bound of the field of view based on the current heading
     double get_heading() const;
     const double stepsize=2.0;
-    const double field_of_view_rad = Constants::PI/2.0; //90° in rad
+    static constexpr double field_of_view_rad = Constants::PI/2.0; //90° in rad
 
 private:    
     Organism* organism;
@@ -29,7 +29,7 @@ private:
     //units are rad, 0.0 is heading right, PI/2 is heading up, PI is heading left, 3/2PI is heading down
     double heading;
     double determine_opposite_direction(int addx, int addy) const;
-    void turn(double degrees); //turn one unit based on the current heading
+    void turn(double radians);
     const sim_util util;
 };
 

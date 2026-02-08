@@ -31,26 +31,22 @@ Location::Location(int px, int py, bool transp, int veg, std::string_view name, 
 }
 
 
-const std::string Location::toString()
-{
+std::string Location::toString() const {
     return "Maxyield: "+std::to_string(maxyield);
 }
 
-const std::string Location::getName()
-{
+std::string Location::getName() const {
     return name;
 }
 
-const Point Location::getTopLeft()
-{
+const Point& Location::getTopLeft() const {
     return top_left;
 }
 const Point& Location::getBottomRight() const
 {
     return bottom_right;
 }
-const Rectangle& Location::getArea()
-{
+const Rectangle& Location::getArea() const {
     return area;
 }
 
