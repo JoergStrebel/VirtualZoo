@@ -5,11 +5,9 @@
 #define ORGANISM_H
 #include <string>
 #include <array>
-#include "sim_util.h"
-#include "Projection.h"
 #include "sensor.h"
 #include <vector>
-#include <array>
+#include "colour.h"
 
 class Organism_Manager;
 
@@ -24,7 +22,7 @@ public:
     void act();
     void physical_stimulus(std::string_view st);
     sensor* sensorarray[8]{};
-    void visual_stimulus(std::vector<int>& world_color, std::vector<double> world_distance);
+    void visual_stimulus(const std::vector<Colour>& world_color, const std::vector<double>& world_distance);
 
 private:
     static constexpr int MAXENERGY=100;    

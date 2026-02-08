@@ -17,11 +17,8 @@ public:
     sim_util();
 
     int randomint(const int minval, const int maxval);
-
-    /**
-     * Destructor
-     */
-    ~sim_util();
+    double normalize(double radvalue) const;
+    double heading_to_rad(double heading) const;
 
 private:
     std::random_device r;

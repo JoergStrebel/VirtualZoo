@@ -37,7 +37,6 @@ set(SOURCES
         src/organism.cpp
         src/organism_manager.cpp
         src/worldmodel/Point.cpp
-        src/Projection.cpp
         src/worldmodel/Rectangle.cpp
         src/sensor.cpp
         src/sim_util.cpp

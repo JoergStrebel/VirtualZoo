@@ -4,29 +4,28 @@
 #include "constants.h"
 #include <cmath>
 #include <algorithm>
+#include "sim_util.h"
 
 Organism_Manager::Organism_Manager(){ 
-    this->heading=0.0;
+    this->heading=Constants::PI;
     this->x = 400.0;
     this->y = 400.0;
+    organism=nullptr; //to be set when the organism registers itself
 }
 
 void Organism_Manager::move() {
     //transform into standard radian angle
-    double radAngle = (heading/360.0)*2*Constants::PI;
-    double deltay = stepsize*std::cos(radAngle);
+    double deltay = stepsize*std::cos(heading);
     y=y-deltay; //y-axis is inverted
-    double deltax = stepsize*std::sin(radAngle);
+    double deltax = stepsize*std::sin(heading);
     x=x+deltax;
     //std::cout << "Step: " << deltax << ", " << deltay << std::endl;
 }
 
-
 // turn the organism by a certain number of degrees
-void Organism_Manager::turn(const double degrees) {
-    heading += degrees;
-    heading = heading - 360.0*std::floor(heading/360.0);
-    //std::cout << "New heading: " << heading << std::endl;    
+void Organism_Manager::turn(const double radians) {
+     //normalize to 0 ... 2pi radians
+    heading = util.normalize(heading+radians);
 }
 
 void Organism_Manager::turn_around(int addx, int addy){
@@ -39,6 +38,7 @@ void Organism_Manager::register_organism(Organism* org){
     organism=org;
 }
 
+//Returns the angle in rad that the organism needs to turn to face away from the stimulus
 double Organism_Manager::determine_opposite_direction(int addx, int addy) const {
       //determine the direction from which the stimuli come          
         //derive direction from the stimdir
@@ -47,24 +47,19 @@ double Organism_Manager::determine_opposite_direction(int addx, int addy) const 
         //see https://en.cppreference.com/w/cpp/numeric/math/atan2
         // we need -addy because the y-axis is inverted
         double radAngle = std::atan2((double)-addy, (double)addx); // -pi ... pi radians
-        double targetAngle = 180.0*(radAngle/(Constants::PI)); // -180 ... 180 degrees
-        //std::cout << "target angle of stimulus: " << targetAngle << std::endl;
-        //targetAngle =0 --> stimuliAngle = 90
-        //targetAngle =90 --> stimuliAngle = 0
-        //targetAngle =180 --> stimuliAngle = 270
-        //targetAngle = -90 --> stimuliAngle = 180
-        //targetAngle = -180 --> stimuliAngle = 270
-        double calcHeading = 360.0-(targetAngle-90.0); // calculate to 360 degrees pointing upwards 
-        //std::cout << "calculated heading of stimulus: " << calcHeading << std::endl;
-        // normalize calcHeading to 0...360
-        double normCalcHeading = calcHeading - 360.0*std::floor(calcHeading/360.0);
-        //std::cout << "Normalized heading of stimulus: " << normCalcHeading << std::endl;
-        //calculate the opposite heading as the new direction
-        double OppHeading = normCalcHeading + 180.0;
-        //std::cout << "Opposing heading of stimulus: " << OppHeading << std::endl;
-        double normOppHeading = OppHeading - 360.0*std::floor(OppHeading/360.0);
-        //std::cout << "Normalized opposing heading of stimulus: " << normOppHeading << std::endl;
-        double headingdiff = normOppHeading-heading;
-        //std::cout << "Degrees to turn: " << headingdiff << std::endl;
-        return headingdiff;
+        double OppHeading = radAngle + Constants::PI; // add pi to get the opposite direction, still in -pi ... pi
+        double normOppHeading = util.normalize(OppHeading); // normalize to 0 ... 2pi radians
+        return normOppHeading-heading;
+}
+
+void Organism_Manager::getFoV(double& leftBound, double& rightBound) const {
+    // Calculate left and right bounds of the field of view based on current heading
+    double halfFoV = field_of_view_rad / 2.0;
+
+    leftBound = util.normalize(heading - halfFoV);
+    rightBound = util.normalize(heading + halfFoV);
+}
+
+double Organism_Manager::get_heading() const {
+    return heading;
 }

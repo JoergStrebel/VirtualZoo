@@ -8,7 +8,6 @@
 #include <limits>
 #include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "Projection.h"
 #include <CGAL/intersections.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -61,7 +60,7 @@ void World::check_collisions(){
 // 0.0 is heading west, pi/2 is heading north, pi is heading east, 3pi/2 is heading south
 // counting is counterclockwise
 double World::calculateRadians(double x, double y) const {
-    return normalize(std::atan2(y - myOrgMan.y, x - myOrgMan.x));
+    return util.normalize(std::atan2(y - myOrgMan.y, x - myOrgMan.x));
 }
 
 // Helper function to calculate the squared distance between two points
@@ -71,18 +70,6 @@ float World::distanceSquared(const float x1, const float y1, const float x2, con
     return dx * dx + dy * dy;
 }
 
-double World::normalize(double radvalue) {
-    while (radvalue < 0) radvalue += 2.0 * Constants::PI;
-    while (radvalue >= 2.0 * Constants::PI) radvalue -= ((double)2.0) * Constants::PI;
-    return radvalue;
-}
-
-double World::heading_to_rad(double heading) {
-    // 0.0 is heading north, 90.0 is heading east, 180.0 is heading south, 270.0 is heading west
-    // counting is clockwise
-    double angle = 360 +(90.0 - heading);
-    return normalize((angle / 360.0) * 2.0 * Constants::PI);
-}
 
 // Computes ray-line intersection with squared distance from organism position
 bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSquaredDistance) const {
@@ -135,7 +122,7 @@ bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSq
  */
 void World::create_visual_impression(){
     // Initialize depth buffer: 100 pixels, each representing 2π/100 radians
-    const std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
+    std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
     for (auto& pixel : depthBuffer) {
         pixel.depth = std::numeric_limits<double>::infinity();
         pixel.locationIndex = -1;  // -1 means no object
@@ -168,13 +155,48 @@ void World::create_visual_impression(){
             locationIndex++;
         }
     }
-    // trim the depth buffer to only include pixels within the organism's field of view (FOV)
     const std::vector<DepthPixel> culledDepthBuffer = trimDepthBufferByFOV(depthBuffer);
 
-    // Hand over the projections to the organism as a visual stimulus
-    myOrg.visual_stimulus(depthBuffer);
+    std::vector<Colour> world_color;
+    std::vector<double> world_distance;
+    //TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
+    //TODO: DepthPixel is missing the direction / angle information, which is needed to map the depth buffer to the retina pixels. This can be added as a member variable in the DepthPixel struct, and calculated during the ray casting process.
+    for (const DepthPixel& pixel : culledDepthBuffer) {
+        if (pixel.locationIndex != -1) {
+            // Object is visible in this pixel
+            world_color.push_back(allLocs[pixel.locationIndex]->getColor());
+            world_distance.push_back(std::sqrt(pixel.depth)); // convert squared distance to actual distance
+        } else {
+            // No object visible, use default values
+            world_color.push_back(Colour(0,0,0,"black")); // e.g., black for no object
+            world_distance.push_back(Constants::UNLIMITEDSIGHTDISTANCE);
+        }
+    }
+
+    // Hand over the buffer to the organism as a visual stimulus
+    myOrg.visual_stimulus(world_color,world_distance);
 }
 
-std::vector<DepthPixel> World::trimDepthBufferByFOV(const std::vector<DepthPixel>) const {
+// trim the depth buffer to only include pixels within the organism's field of view (FOV)
+std::vector<World::DepthPixel> World::trimDepthBufferByFOV(const std::vector<World::DepthPixel>& depthBuffer) const {
+    std::vector<DepthPixel> trimmedBuffer;
+    double leftBound, rightBound;
+    myOrgMan.getFoV(leftBound, rightBound);
+
+    //fill the trimmed buffer with the corresponding pixels from the original depth buffer
+    for (int i = 0; i < Constants::ANGULAR_RESOLUTION; ++i) {
+        double pixelAngle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * i;
+        // Check if pixel angle is within FOV
+        // two cases: FOV does not cross 0radians, FOV crosses 0 radians
+        bool zeroCrossing = leftBound < myOrgMan.field_of_view_rad; // FOV crosses 0 radians
+        bool inFOV = zeroCrossing ? (
+            (pixelAngle <= leftBound && pixelAngle >=0) || (pixelAngle >= rightBound && pixelAngle <= 2* Constants::PI)) :
+            (pixelAngle <= leftBound && pixelAngle >= rightBound);
+
+        if (inFOV) {
+            trimmedBuffer.emplace_back(depthBuffer[i]);
+        }
+    }
+    return trimmedBuffer;
 
 }

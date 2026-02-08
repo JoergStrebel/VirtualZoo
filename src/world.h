@@ -4,7 +4,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <string>
+
 #include "locations.h"
 #include "organism.h"
 #include "organism_manager.h"
@@ -38,6 +38,7 @@ public:
     Organism myOrg{"beetle", myOrgMan};    
     
 private:
+    sim_util util;
     //checks collisions among objects and between objects and boundary
     //sends events to the affected objects, so that they can react on.
     void check_collisions();
@@ -46,14 +47,9 @@ private:
 
      //calculates squared distance between two points
     static float distanceSquared(float x1, float y1, float x2, float y2);
-    //finds intersection between a ray and a line segment
-    static double normalize(double radvalue);
-    static double heading_to_rad(double heading);
+
      //supplies the organism with a world view
     void create_visual_impression();
-
-    // Helper functions for create_visual_impression refactoring
-    [[nodiscard]] std::vector<Projection> filterProjectionsByFOV(const std::vector<Projection>& projections) const;
 
      // Depth buffer and projection building
     struct DepthPixel {
@@ -61,17 +57,13 @@ private:
         int locationIndex;     // index of the visible location (-1 if no object)
     };
 
+    std::vector<World::DepthPixel> trimDepthBufferByFOV(const std::vector<World::DepthPixel>& depthBuffer) const;
+
     /**
      * Computes the ray-based squared distance intersection between a ray at a given angle
      * and a line segment. Returns true if intersection exists, false otherwise.
      */
     [[nodiscard]] bool rayLineIntersection(double rayAngle, const Line& line, double& outSquaredDistance) const;
-
-    /**
-     * Builds projection segments from the depth buffer by grouping consecutive pixels
-     * with the same visible location.
-     */
-    [[nodiscard]] std::vector<Projection> buildProjectionsFromDepthBuffer(const std::vector<DepthPixel>& depthBuffer) const;
 
 #ifdef UNIT_TEST
 #include <gtest/gtest.h>

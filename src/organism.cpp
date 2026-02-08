@@ -61,12 +61,12 @@ void Organism::act() {
     }
 }
 
-void Organism::physical_stimulus(std::string_view st){
+void Organism::physical_stimulus(const std::string_view st){
     std::cout << "Received stimulus: " << st << std::endl;
     allstimuli.emplace_back(st);
 }
 
-std::pair<int,int> Organism::getStimulusDirection(std::string_view id_object){
+std::pair<int,int> Organism::getStimulusDirection(const std::string_view id_object){
      for(int i=0;i<=7;i++){
         sensor* currentsens = this->sensorarray[i];
         if (currentsens->get_id()==id_object) return std::make_pair(currentsens->x, currentsens->y);
@@ -78,7 +78,7 @@ void Organism::step_forward(){
     om.move();
 }
 
-void Organism::move_towards(double visual_direction){}
+void Organism::move_towards(const double visual_direction){}
 
 bool Organism::detect_collision(){
     return !allstimuli.empty();
@@ -90,7 +90,7 @@ void Organism::recognize(){}
 // the distance to the nearest object in that direction and
 // the color of that object
 // the array is already trimmed to the field of view of the organism, so it only contains the pixels that are visible to the organism
-void Organism::visual_stimulus(std::vector<int>& world_color, std::vector<double> world_distance){
+void Organism::visual_stimulus(const std::vector<Colour>& world_color, const std::vector<double>& world_distance){
     std::cout << "Received visual stimulus: " << std::endl;
     //erase previous retina content
     retina_color.fill(0);
