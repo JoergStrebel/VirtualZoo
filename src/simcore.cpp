@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 {
     World myWorld;
     appconfig simconfig;
-    std::unique_ptr<visualize> myVis;
+    std::unique_ptr<visualize> myVis = std::make_unique<visualize_gui>();
 
     //Load media
     if( !myVis->init() )

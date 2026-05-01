@@ -8,7 +8,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 # Compiler-Flags
 # TODO:remove -ftrapv for release builds
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion -pedantic-errors -march=native -mtune=native -mfpmath=sse -msse4.1 -msse4.2 -flto -fno-math-errno -fno-signaling-nans -fno-trapping-math -freciprocal-math -Wdeprecated -fsanitize=undefined -ftrapv")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wconversion -Wdouble-promotion -Wcast-align -Wcast-qual -Wmissing-declarations -Wpointer-arith -Wreturn-type -Wno-unused-parameter -Wno-unused-function -Wno-sign-conversion -pedantic-errors -march=native -mtune=native -flto -fno-math-errno -fno-signaling-nans -fno-trapping-math -freciprocal-math -Wdeprecated -fsanitize=undefined -ftrapv")
 
 # Include-Verzeichnisse
 include_directories(src)
@@ -20,13 +20,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-# Finde SDL2 und SDL2_image
-FIND_PACKAGE( Boost 1.74 REQUIRED )
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(CGAL REQUIRED)
+# set the output directory for built objects.
+# This makes sure that the dynamic library goes into the build directory automatically.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
+# This assumes the SDL source is available in vendored/SDL
+add_subdirectory(./SDL EXCLUDE_FROM_ALL)
+add_subdirectory(./SDL_image EXCLUDE_FROM_ALL)
+
+find_package(CGAL REQUIRED)
 
 # Quell-Dateien explizit angeben (ohne simcore.cpp which is main)
 set(SOURCES
