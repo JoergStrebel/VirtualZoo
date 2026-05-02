@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         myVis->draw(myWorld);
         
         //slow down
-        usleep(1000);
+        usleep(10000);
     }
     
     return 0;

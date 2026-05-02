@@ -3,6 +3,8 @@
 
 #include "organism.h"
 #include <iostream>
+#include <cmath>
+#include <limits>
 #include "organism_manager.h"
 
 
@@ -86,11 +88,47 @@ void Organism::recognize(){}
 // the distance to the nearest object in that direction, the color of that object and the angle
 // the array is already trimmed to the field of view of the organism, so it only contains the pixels that are visible to the organism
 void Organism::visual_stimulus(const std::vector<DepthPixel>& depth_buffer){
-    std::cout << "Received visual stimulus: " << std::endl;
-    //erase previous retina content
-    retina_color.fill(0);
+    retina_r.fill(0);
+    retina_g.fill(0);
+    retina_b.fill(0);
     retina_distance.fill(Constants::UNLIMITEDSIGHTDISTANCE);
 
-    // TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
+    if (depth_buffer.empty()) return;
+
+    const double heading = om.get_heading();
+    constexpr double halfFoV  = Organism_Manager::field_of_view_rad / 2.0;
+    constexpr double fov_total = Organism_Manager::field_of_view_rad;
+    // only map a retina pixel if the nearest depth entry is within half one depth-pixel's arc
+    constexpr double maxAngDist = Constants::PI / Constants::ANGULAR_RESOLUTION;
+
+    for (int i = 0; i < RETINA_RES; ++i) {
+        // pixel 0 = right (clockwise) edge of FOV; pixel RETINA_RES-1 = left edge
+        const double t = static_cast<double>(i) / (RETINA_RES - 1);
+        double targetAngle = heading - halfFoV + t * fov_total;
+        targetAngle = std::fmod(targetAngle, 2.0 * Constants::PI);
+        if (targetAngle < 0.0) targetAngle += 2.0 * Constants::PI;
+
+        double minDist = std::numeric_limits<double>::max();
+        const DepthPixel* nearest = nullptr;
+        for (const auto& px : depth_buffer) {
+            const double diff = std::abs(px.angle - targetAngle);
+            const double angDist = std::min(diff, 2.0 * Constants::PI - diff);
+            if (angDist < minDist) {
+                minDist = angDist;
+                nearest = &px;
+            }
+        }
+
+        if (nearest && minDist <= maxAngDist) {
+            if (nearest->world_color.has_value()) {
+                retina_r[i] = nearest->world_color->r;
+                retina_g[i] = nearest->world_color->g;
+                retina_b[i] = nearest->world_color->b;
+            }
+            if (nearest->location_index.has_value()) {
+                retina_distance[i] = std::sqrt(nearest->depth);
+            }
+        }
+    }
 }
 

@@ -5,10 +5,14 @@
 #define ORGANISM_H
 #include <string>
 #include <array>
+#include <cstdint>
 #include "sensor.h"
 #include <vector>
 #include "depth_pixel.h"
 #include "constants.h"
+#ifdef UNIT_TEST
+#include <gtest/gtest.h>
+#endif
 
 class Organism_Manager;
 
@@ -31,8 +35,19 @@ private:
     const std::string identifier;
     int energy;
     static constexpr int RETINA_RES=90; //retina resolution
-    std::array<int, RETINA_RES> retina_color{};
+    std::array<uint8_t, RETINA_RES> retina_r{};
+    std::array<uint8_t, RETINA_RES> retina_g{};
+    std::array<uint8_t, RETINA_RES> retina_b{};
     std::array<double, RETINA_RES> retina_distance{};
+
+#ifdef UNIT_TEST
+    friend class ::testing::Test;
+    FRIEND_TEST(OrganismTest, VisualStimulus_EmptyBuffer_RetinaIsDefault);
+    FRIEND_TEST(OrganismTest, VisualStimulus_PixelAtCenter_MapsToMiddleRetina);
+    FRIEND_TEST(OrganismTest, VisualStimulus_CorrectDistanceSqrt);
+    FRIEND_TEST(OrganismTest, VisualStimulus_NoObject_ColorStaysZero);
+    FRIEND_TEST(OrganismTest, VisualStimulus_ZeroCrossingHeading);
+#endif
 
     Organism_Manager& om;
 
