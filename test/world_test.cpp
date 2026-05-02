@@ -3,6 +3,8 @@
 #include "worldmodel/Line.h"
 #include "worldmodel/Point.h"
 #include "constants.h"
+#include <algorithm>
+#include <limits>
 
 // Hinweis zum CGAL-Handling:
 // Die Projektquelle verwendet CGAL (Exact_predicates_inexact_constructions_kernel)
@@ -67,6 +69,21 @@ TEST(WorldTest, RaySegmentIntersection_Hit) {
     EXPECT_NEAR(outSquaredDist, 25.0, 1e-4);
 }
 
+// Build the canonical 100-pixel angular buffer (same layout as create_visual_impression)
+static std::vector<DepthPixel> makeBuffer() {
+    std::vector<DepthPixel> buf(Constants::ANGULAR_RESOLUTION);
+    for (int i = 0; i < Constants::ANGULAR_RESOLUTION; ++i) {
+        buf[i].angle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * i;
+        buf[i].depth = std::numeric_limits<double>::infinity();
+    }
+    return buf;
+}
+
+static bool containsAngle(const std::vector<DepthPixel>& buf, double target) {
+    return std::any_of(buf.begin(), buf.end(),
+        [target](const DepthPixel& p){ return std::abs(p.angle - target) < 1e-9; });
+}
+
 TEST(WorldTest, RaySegmentIntersection_Miss) {
     World w;
     w.myOrgMan.x = 0.0;
@@ -80,5 +97,89 @@ TEST(WorldTest, RaySegmentIntersection_Miss) {
     double outSquaredDist = 0;
     bool hit = w.rayLineIntersection(0.0 /* angle 0 => +X axis */, seg, outSquaredDist);
     EXPECT_FALSE(hit);
+}
+
+// trimDepthBufferByFOV — heading PI (default), FOV = [3π/4, 5π/4], no zero-crossing
+
+TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_CenterAngle_IsIncluded) {
+    World w;
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // buf[50].angle = 50 * 2π/100 ≈ π, the exact FOV centre for heading π
+    EXPECT_TRUE(containsAngle(trimmed, buf[50].angle));
+}
+
+TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_AngleZero_IsExcluded) {
+    World w;
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    EXPECT_FALSE(containsAngle(trimmed, buf[0].angle));  // 0 is outside [3π/4, 5π/4]
+}
+
+TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_BoundaryAngles_AreIncluded) {
+    World w;
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // buf[38].angle ≈ 2.388 > 3π/4 ≈ 2.356 — just inside the lower bound
+    EXPECT_TRUE(containsAngle(trimmed, buf[38].angle));
+    // buf[62].angle ≈ 3.896 < 5π/4 ≈ 3.927 — just inside the upper bound
+    EXPECT_TRUE(containsAngle(trimmed, buf[62].angle));
+}
+
+TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_CorrectCount) {
+    World w;
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // FOV = π/2 out of 2π → 25 of 100 angular pixels (indices 38..62)
+    EXPECT_EQ(trimmed.size(), 25u);
+}
+
+// trimDepthBufferByFOV — heading ≈ 0 (turn_around from π), FOV = [7π/4, π/4], zero-crossing
+
+TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AngleZero_IsIncluded) {
+    World w;
+    w.myOrgMan.turn_around(-1, 0);  // rotates heading from π to ≈ 0
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    EXPECT_TRUE(containsAngle(trimmed, buf[0].angle));   // 0 is inside [7π/4, 2π) ∪ [0, π/4]
+}
+
+TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AnglePI_IsExcluded) {
+    World w;
+    w.myOrgMan.turn_around(-1, 0);
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    EXPECT_FALSE(containsAngle(trimmed, buf[50].angle)); // ≈ π is opposite the heading
+}
+
+TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_BoundaryAngles_AreIncluded) {
+    World w;
+    w.myOrgMan.turn_around(-1, 0);
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // buf[12].angle ≈ 0.754 < π/4 ≈ 0.785 — just inside the upper side of the FOV
+    EXPECT_TRUE(containsAngle(trimmed, buf[12].angle));
+    // buf[88].angle ≈ 5.529 > 7π/4 ≈ 5.498 — just inside the lower side of the FOV
+    EXPECT_TRUE(containsAngle(trimmed, buf[88].angle));
+}
+
+TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AngleOutsideFOV_IsExcluded) {
+    World w;
+    w.myOrgMan.turn_around(-1, 0);
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // buf[13].angle ≈ 0.817 > π/4 ≈ 0.785 — just outside the upper side
+    EXPECT_FALSE(containsAngle(trimmed, buf[13].angle));
+    // buf[87].angle ≈ 5.467 < 7π/4 ≈ 5.498 — just outside the lower side
+    EXPECT_FALSE(containsAngle(trimmed, buf[87].angle));
+}
+
+TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_CorrectCount) {
+    World w;
+    w.myOrgMan.turn_around(-1, 0);
+    const auto buf = makeBuffer();
+    const auto trimmed = w.trimDepthBufferByFOV(buf);
+    // FOV = π/2: indices 0..12 (13 pixels) + indices 88..99 (12 pixels) = 25 total
+    EXPECT_EQ(trimmed.size(), 25u);
 }
 

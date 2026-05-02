@@ -64,6 +64,15 @@ private:
     FRIEND_TEST(WorldTest, HeadingToRad_Basic);
     FRIEND_TEST(WorldTest, RaySegmentIntersection_Hit);
     FRIEND_TEST(WorldTest, RaySegmentIntersection_Miss);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_CenterAngle_IsIncluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_AngleZero_IsExcluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_BoundaryAngles_AreIncluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_NoZeroCrossing_CorrectCount);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AngleZero_IsIncluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AnglePI_IsExcluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_BoundaryAngles_AreIncluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_AngleOutsideFOV_IsExcluded);
+    FRIEND_TEST(WorldTest, TrimDepthBuffer_ZeroCrossing_CorrectCount);
 #endif
 };
 

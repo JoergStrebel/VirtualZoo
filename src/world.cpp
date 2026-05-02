@@ -68,19 +68,15 @@ double World::distanceSquared(const double x1, const double y1, const double x2,
 // Computes ray-line intersection with squared distance from organism position
 bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSquaredDistance) const {
     // Create a ray originating from the organism's position at the given angle
-    Point_2 rayOrigin(myOrgMan.x, myOrgMan.y);
+    CGAL_Point_2 rayOrigin(myOrgMan.x, myOrgMan.y);
 
-    // Ray direction: cos(angle) for x, sin(angle) for y
-    double rayDirX = std::cos(rayAngle);
-    double rayDirY = std::sin(rayAngle);
-
-    Ray_2 ray(rayOrigin, K::Direction_2(rayDirX, rayDirY));
+    CGAL_Ray_2 ray(rayOrigin, CGAL_Direction_2(std::cos(rayAngle), std::sin(rayAngle)));
 
     // Get the line segment
     Point startPt = line.getStartPoint();
     Point endPt = line.getEndPoint();
-    Segment_2 segment(CGAL_Point_2(startPt.getX(), startPt.getY()),
-                     CGAL_Point_2(endPt.getX(), endPt.getY()));
+    CGAL_Segment_2 segment(CGAL_Point_2(startPt.getX(), startPt.getY()),
+                           CGAL_Point_2(endPt.getX(), endPt.getY()));
 
     // Compute intersection using CGAL
     auto intersection = CGAL::intersection(ray, segment);
@@ -90,12 +86,12 @@ bool World::rayLineIntersection(double rayAngle, const Line& line, double& outSq
     }
 
     // Extract the intersection point
-    const Point_2* intersectionPoint = nullptr;
-    if (const Point_2* pt = std::get_if<Point_2>(&*intersection)) {
+    const CGAL_Point_2* intersectionPoint = nullptr;
+    if (const CGAL_Point_2* pt = std::get_if<CGAL_Point_2>(&*intersection)) {
         intersectionPoint = pt;
     } else {
         // If result is a segment (ray and line overlap), use the closer endpoint
-        if (const Segment_2* seg = std::get_if<Segment_2>(&*intersection)) {
+        if (const CGAL_Segment_2* seg = std::get_if<CGAL_Segment_2>(&*intersection)) {
             intersectionPoint = &seg->point(0);
         } else {
             return false;
