@@ -3,30 +3,27 @@
 
 #include "organism.h"
 #include <iostream>
-#include "constants.h"
-#include "sensor.h"
 #include "organism_manager.h"
 
 
-Organism::Organism(const std::string_view id, Organism_Manager& manager): identifier(std::string(id)), om(manager) {
-    this->energy = MAXENERGY;
+// sensor coordinates are entity-local in world pixels; (0,0) is the entity center.
+// real world address = myOrgMan.x + ENTITYSIZE/2 + sensor.x
+Organism::Organism(const std::string_view id, Organism_Manager& manager)
+    : sensorarray{{
+          sensor("pressure", "p0",  5 + shiftcenter,  2 + shiftcenter),
+          sensor("pressure", "p1", 12 + shiftcenter,  1 + shiftcenter),
+          sensor("pressure", "p2", 20 + shiftcenter,  1 + shiftcenter),
+          sensor("pressure", "p3", 25 + shiftcenter,  2 + shiftcenter),
+          sensor("pressure", "p4", 31 + shiftcenter, 21 + shiftcenter),
+          sensor("pressure", "p5", 25 + shiftcenter, 31 + shiftcenter),
+          sensor("pressure", "p6",  5 + shiftcenter, 31 + shiftcenter),
+          sensor("pressure", "p7",  1 + shiftcenter, 21 + shiftcenter)
+      }},
+      identifier(std::string(id)),
+      energy(MAXENERGY),
+      om(manager)
+{
     om.register_organism(this);
-
-    //initialize the sensors
- 
- //the following coordinates are entity coordinates in world pixels 
- //(0,0) denotes the center of the entity.
- // the real, absolute pixel address is then x+shiftcenter+sensor.x
- constexpr int shiftcenter = -1*Constants::ENTITYSIZE/2; //-32
- sensorarray[0] = new sensor("pressure", "p0", 5+shiftcenter, 2+shiftcenter);
- sensorarray[1] = new sensor("pressure", "p1", 12+shiftcenter, 1+shiftcenter);
- sensorarray[2] = new sensor("pressure", "p2", 20+shiftcenter, 1+shiftcenter);
- sensorarray[3] = new sensor("pressure", "p3", 25+shiftcenter, 2+shiftcenter);
- sensorarray[4] = new sensor("pressure", "p4", 31+shiftcenter, 21+shiftcenter);
- sensorarray[5] = new sensor("pressure", "p5", 25+shiftcenter, 31+shiftcenter);
- sensorarray[6] = new sensor("pressure", "p6", 5+shiftcenter, 31+shiftcenter);
- sensorarray[7] = new sensor("pressure", "p7", 1+shiftcenter, 21+shiftcenter);
-
 }
 
 Organism::~Organism()= default;
@@ -51,12 +48,13 @@ void Organism::act() {
             addx+=stimdir.first;
             addy+=stimdir.second;
         } 
-        om.turn_around(addx, addy);           
+        om.turn_around(addx, addy);
         this->step_forward();
     } else //just move along the old course
     {
         this->step_forward();
     }
+    allstimuli.clear();
 }
 
 void Organism::physical_stimulus(const std::string_view st){
@@ -65,9 +63,9 @@ void Organism::physical_stimulus(const std::string_view st){
 }
 
 std::pair<int,int> Organism::getStimulusDirection(const std::string_view id_object) const {
-     for(int i=0;i<=7;i++){
-        sensor* currentsens = this->sensorarray[i];
-        if (currentsens->get_id()==id_object) return std::make_pair(currentsens->x, currentsens->y);
+     for(std::size_t i = 0; i < std::size(sensorarray); ++i){
+        const sensor& currentsens = this->sensorarray[i];
+        if (currentsens.get_id()==id_object) return std::make_pair(currentsens.x, currentsens.y);
     }
     return std::make_pair(0, 0);
 }
@@ -94,8 +92,5 @@ void Organism::visual_stimulus(const std::vector<DepthPixel>& depth_buffer){
     retina_distance.fill(Constants::UNLIMITEDSIGHTDISTANCE);
 
     // TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
-    // std::array<int, RETINA_RES> retina_color;
-    // std::array<double, RETINA_RES> retina_distance;
-
 }
 

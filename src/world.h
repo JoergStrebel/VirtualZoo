@@ -10,18 +10,6 @@
 #include "organism_manager.h"
 #include "depth_pixel.h"
 
-// Structure to represent an angle event in the angular sweep
-struct AngleEvent {
-    float angle;
-    const Line* segment; //TODO: not used anywhere - verify logic
-    int locationIndex;  // To track which location this segment belongs to
-    bool isEndpoint;    // True if this is an actual endpoint, false if it's an offset ray
-
-    // Constructor
-    AngleEvent(const float a, const Line* seg, const int locIdx, const bool isEnd = true)
-        : angle(a), segment(seg), locationIndex(locIdx), isEndpoint(isEnd) {}
-};
-
 /**
  * This class represents the simulated world.
  */
@@ -47,7 +35,7 @@ private:
     [[nodiscard]] double calculateRadians(double x, double y) const;
 
      //calculates squared distance between two points
-    static float distanceSquared(double x1, double y1, double x2, double y2);
+    static double distanceSquared(double x1, double y1, double x2, double y2);
 
      //supplies the organism with a world view
     void create_visual_impression();

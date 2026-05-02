@@ -56,8 +56,8 @@ void Organism_Manager::getFoV(double& leftBound, double& rightBound) const {
     // Calculate left and right bounds of the field of view based on current heading
     constexpr double halfFoV = field_of_view_rad / 2.0;
 
-    leftBound = util.normalize(heading - halfFoV);
-    rightBound = util.normalize(heading + halfFoV);
+    leftBound = util.normalize(heading + halfFoV);
+    rightBound = util.normalize(heading - halfFoV);
 }
 
 double Organism_Manager::get_heading() const {

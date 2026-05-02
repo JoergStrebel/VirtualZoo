@@ -8,6 +8,7 @@
 #include "sensor.h"
 #include <vector>
 #include "depth_pixel.h"
+#include "constants.h"
 
 class Organism_Manager;
 
@@ -21,11 +22,12 @@ public:
     ~Organism();
     void act();
     void physical_stimulus(std::string_view st);
-    sensor* sensorarray[8]{};
+    std::array<sensor, 8> sensorarray;
     void visual_stimulus(const std::vector<DepthPixel>& depth_buffer);
 
 private:
-    static constexpr int MAXENERGY=100;    
+    static constexpr int MAXENERGY=100;
+    static constexpr int shiftcenter = -Constants::ENTITYSIZE / 2;
     const std::string identifier;
     int energy;
     static constexpr int RETINA_RES=90; //retina resolution

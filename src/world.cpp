@@ -7,13 +7,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/intersections.h>
-
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Point_2 = K::Point_2;
-using Ray_2 = K::Ray_2;
-using Segment_2 = K::Segment_2;
 
 
 World::World()
@@ -28,20 +22,20 @@ void World::run_world(){
 void World::check_collisions(){
 
     std::vector<Location*> allLocs = allobjects.getLocations();
-    for(int i=0;i<=7;i++){
-        sensor* currentsens = myOrg.sensorarray[i];
-        
+    for(std::size_t i = 0; i < std::size(myOrg.sensorarray); ++i){
+        const sensor& currentsens = myOrg.sensorarray[i];
+
         //Calculate effective world coordinates of sensor
-        int x = static_cast<int>(std::round(myOrgMan.x)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens->x));
-        int y = static_cast<int>(std::round(myOrgMan.y)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens->y));
-        
+        int x = static_cast<int>(std::round(myOrgMan.x)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens.x));
+        int y = static_cast<int>(std::round(myOrgMan.y)+static_cast<double>(Constants::ENTITYSIZE)/2.0+static_cast<double>(currentsens.y));
+
         //check collision between organism and world boundaries
         if (x<=0 ||
             y<=0 ||
             y >= Constants::MAXY ||
             x >= Constants::MAXX) {
             //send stimulus to the organism
-            myOrg.physical_stimulus(currentsens->get_id());
+            myOrg.physical_stimulus(currentsens.get_id());
         }
         //check collision between the organism and locations
         for (Location* loc :allLocs){
@@ -50,7 +44,7 @@ void World::check_collisions(){
                 y >= loc->getTopLeft().getY() &&
                 y <= loc->getBottomRight().getY()) {
             //send stimulus to the organism
-                myOrg.physical_stimulus(currentsens->get_id());            
+                myOrg.physical_stimulus(currentsens.get_id());
             }
         }
     }
@@ -64,9 +58,9 @@ double World::calculateRadians(double x, double y) const {
 }
 
 // Helper function to calculate the squared distance between two points
-float World::distanceSquared(const double x1, const double y1, const double x2, const double y2) {
-    float dx = x2 - x1;
-    float dy = y2 - y1;
+double World::distanceSquared(const double x1, const double y1, const double x2, const double y2) {
+    double dx = x2 - x1;
+    double dy = y2 - y1;
     return dx * dx + dy * dy;
 }
 
@@ -125,8 +119,6 @@ void World::create_visual_impression(){
     std::vector<DepthPixel> depthBuffer(Constants::ANGULAR_RESOLUTION);
     for (auto& pixel : depthBuffer) {
         pixel.depth = std::numeric_limits<double>::infinity();
-        pixel.locationIndex = -1;  // -1 means no object
-        pixel.angle = 0.0;
     }
 
     const auto allLocs = allobjects.getLocations();
@@ -150,7 +142,7 @@ void World::create_visual_impression(){
                     // Update depth buffer if this is closer than current entry
                     if (squaredDistance < depthBuffer[pixelIdx].depth) {
                         depthBuffer[pixelIdx].depth = squaredDistance;
-                        depthBuffer[pixelIdx].locationIndex = locationIndex;
+                        depthBuffer[pixelIdx].location_index = locationIndex;
                     }
                 }
             }
@@ -158,8 +150,8 @@ void World::create_visual_impression(){
         }
     }
     for (auto& pixel : depthBuffer) {
-        if (pixel.locationIndex != -1) {
-            const Colour& c = allLocs[pixel.locationIndex]->getColor();
+        if (pixel.location_index.has_value()) {
+            const Colour& c = allLocs[pixel.location_index.value()]->getColor();
             pixel.world_color.emplace(c.r, c.g, c.b, c.name);
         }
     }
@@ -180,8 +172,8 @@ std::vector<DepthPixel> World::trimDepthBufferByFOV(const std::vector<DepthPixel
     for (int i = 0; i < Constants::ANGULAR_RESOLUTION; ++i) {
         const double pixelAngle = depthBuffer[i].angle;
         // Check if pixel angle is within FOV
-        // two cases: FOV does not cross 0radians, FOV crosses 0 radians
-        bool zeroCrossing = leftBound < Organism_Manager::field_of_view_rad; // FOV crosses 0 radians
+        // two cases: FOV does not cross 0 radians, FOV crosses 0 radians
+        bool zeroCrossing = leftBound < Organism_Manager::field_of_view_rad; // heading is to the right, FoV crosses 0
         bool inFOV = zeroCrossing ? (
             (pixelAngle <= leftBound && pixelAngle >=0) || (pixelAngle >= rightBound && pixelAngle <= 2* Constants::PI)) :
             (pixelAngle <= leftBound && pixelAngle >= rightBound);

@@ -5,8 +5,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Segment_2 CGAL_Segment_2;
 typedef Kernel::Point_2 CGAL_Point_2;
+typedef Kernel::Segment_2 CGAL_Segment_2;
+typedef Kernel::Ray_2 CGAL_Ray_2;
+typedef Kernel::Direction_2 CGAL_Direction_2;
 
 /**
  * Line segment defined by its starting and ending points
