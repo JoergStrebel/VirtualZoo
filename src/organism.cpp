@@ -84,11 +84,10 @@ bool Organism::detect_collision() const {
 
 void Organism::recognize(){}
 
-// receiver mehod for the visual stimulus, which is an array of depth pixels, each containing
-// the distance to the nearest object in that direction and
-// the color of that object
+// receiver method for the visual stimulus, which is an array of depth pixels, each containing
+// the distance to the nearest object in that direction, the color of that object and the angle
 // the array is already trimmed to the field of view of the organism, so it only contains the pixels that are visible to the organism
-void Organism::visual_stimulus(const std::vector<Colour>& world_color, const std::vector<double>& world_distance){
+void Organism::visual_stimulus(const std::vector<DepthPixel>& depth_buffer){
     std::cout << "Received visual stimulus: " << std::endl;
     //erase previous retina content
     retina_color.fill(0);

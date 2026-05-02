@@ -8,6 +8,7 @@
 #include "locations.h"
 #include "organism.h"
 #include "organism_manager.h"
+#include "depth_pixel.h"
 
 // Structure to represent an angle event in the angular sweep
 struct AngleEvent {
@@ -52,13 +53,7 @@ private:
     void create_visual_impression();
 
      // Depth buffer and projection building
-    struct DepthPixel {
-        double depth;          // squared distance from CGAL intersection
-        int locationIndex;     // index of the visible location (-1 if no object)
-        double angle;          // ray angle in radians [0, 2π)
-    };
-
-    std::vector<World::DepthPixel> trimDepthBufferByFOV(const std::vector<World::DepthPixel>& depthBuffer) const;
+    std::vector<DepthPixel> trimDepthBufferByFOV(const std::vector<DepthPixel>& depthBuffer) const;
 
     /**
      * Computes the ray-based squared distance intersection between a ray at a given angle

@@ -7,7 +7,7 @@
 #include <array>
 #include "sensor.h"
 #include <vector>
-#include "colour.h"
+#include "depth_pixel.h"
 
 class Organism_Manager;
 
@@ -22,13 +22,13 @@ public:
     void act();
     void physical_stimulus(std::string_view st);
     sensor* sensorarray[8]{};
-    void visual_stimulus(const std::vector<Colour>& world_color, const std::vector<double>& world_distance);
+    void visual_stimulus(const std::vector<DepthPixel>& depth_buffer);
 
 private:
     static constexpr int MAXENERGY=100;    
     const std::string identifier;
     int energy;
-    static constexpr int RETINA_RES=90;
+    static constexpr int RETINA_RES=90; //retina resolution
     std::array<int, RETINA_RES> retina_color{};
     std::array<double, RETINA_RES> retina_distance{};
 

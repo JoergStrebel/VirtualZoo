@@ -157,36 +157,28 @@ void World::create_visual_impression(){
             locationIndex++;
         }
     }
-    const std::vector<DepthPixel> culledDepthBuffer = trimDepthBufferByFOV(depthBuffer);
-
-    std::vector<Colour> world_color;
-    std::vector<double> world_distance;
-    //TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
-    for (const DepthPixel& pixel : culledDepthBuffer) {
+    for (auto& pixel : depthBuffer) {
         if (pixel.locationIndex != -1) {
-            // Object is visible in this pixel
-            world_color.push_back(allLocs[pixel.locationIndex]->getColor());
-            world_distance.push_back(std::sqrt(pixel.depth)); // convert squared distance to actual distance
-        } else {
-            // No object visible, use default values
-            world_color.emplace_back(0,0,0,"black"); // e.g., black for no object
-            world_distance.push_back(Constants::UNLIMITEDSIGHTDISTANCE);
+            const Colour& c = allLocs[pixel.locationIndex]->getColor();
+            pixel.world_color.emplace(c.r, c.g, c.b, c.name);
         }
     }
 
+    const std::vector<DepthPixel> culledDepthBuffer = trimDepthBufferByFOV(depthBuffer);
+
     // Hand over the buffer to the organism as a visual stimulus
-    myOrg.visual_stimulus(world_color,world_distance);
+    myOrg.visual_stimulus(culledDepthBuffer);
 }
 
 // trim the depth buffer to only include pixels within the organism's field of view (FOV)
-std::vector<World::DepthPixel> World::trimDepthBufferByFOV(const std::vector<World::DepthPixel>& depthBuffer) const {
+std::vector<DepthPixel> World::trimDepthBufferByFOV(const std::vector<DepthPixel>& depthBuffer) const {
     std::vector<DepthPixel> trimmedBuffer;
     double leftBound, rightBound;
     myOrgMan.getFoV(leftBound, rightBound);
 
     //fill the trimmed buffer with the corresponding pixels from the original depth buffer
     for (int i = 0; i < Constants::ANGULAR_RESOLUTION; ++i) {
-        double pixelAngle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * i;
+        const double pixelAngle = depthBuffer[i].angle;
         // Check if pixel angle is within FOV
         // two cases: FOV does not cross 0radians, FOV crosses 0 radians
         bool zeroCrossing = leftBound < Organism_Manager::field_of_view_rad; // FOV crosses 0 radians
