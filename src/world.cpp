@@ -126,6 +126,7 @@ void World::create_visual_impression(){
     for (auto& pixel : depthBuffer) {
         pixel.depth = std::numeric_limits<double>::infinity();
         pixel.locationIndex = -1;  // -1 means no object
+        pixel.angle = 0.0;
     }
 
     const auto allLocs = allobjects.getLocations();
@@ -135,6 +136,7 @@ void World::create_visual_impression(){
     for (int pixelIdx = 0; pixelIdx < Constants::ANGULAR_RESOLUTION; ++pixelIdx) {
         // Calculate angle for this pixel: pixel * (2π / ANGULAR_RESOLUTION)
         double pixelAngle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * pixelIdx;
+        depthBuffer[pixelIdx].angle = pixelAngle;
 
         // Test intersection with all line segments from all locations
         int locationIndex = 0;
@@ -160,7 +162,6 @@ void World::create_visual_impression(){
     std::vector<Colour> world_color;
     std::vector<double> world_distance;
     //TODO: translate the depth buffer onto pixels on the retina - depth mapping, pixel rendering
-    //TODO: DepthPixel is missing the direction / angle information, which is needed to map the depth buffer to the retina pixels. This can be added as a member variable in the DepthPixel struct, and calculated during the ray casting process.
     for (const DepthPixel& pixel : culledDepthBuffer) {
         if (pixel.locationIndex != -1) {
             // Object is visible in this pixel
@@ -168,7 +169,7 @@ void World::create_visual_impression(){
             world_distance.push_back(std::sqrt(pixel.depth)); // convert squared distance to actual distance
         } else {
             // No object visible, use default values
-            world_color.push_back(Colour(0,0,0,"black")); // e.g., black for no object
+            world_color.emplace_back(0,0,0,"black"); // e.g., black for no object
             world_distance.push_back(Constants::UNLIMITEDSIGHTDISTANCE);
         }
     }
@@ -188,7 +189,7 @@ std::vector<World::DepthPixel> World::trimDepthBufferByFOV(const std::vector<Wor
         double pixelAngle = (2.0 * Constants::PI / Constants::ANGULAR_RESOLUTION) * i;
         // Check if pixel angle is within FOV
         // two cases: FOV does not cross 0radians, FOV crosses 0 radians
-        bool zeroCrossing = leftBound < myOrgMan.field_of_view_rad; // FOV crosses 0 radians
+        bool zeroCrossing = leftBound < Organism_Manager::field_of_view_rad; // FOV crosses 0 radians
         bool inFOV = zeroCrossing ? (
             (pixelAngle <= leftBound && pixelAngle >=0) || (pixelAngle >= rightBound && pixelAngle <= 2* Constants::PI)) :
             (pixelAngle <= leftBound && pixelAngle >= rightBound);

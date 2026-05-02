@@ -9,6 +9,7 @@ A simulator for growing artificially intelligent organisms.
 - CGAL should be provided by the package manager of the Linux distribution. 
 - SDL and SDL_image have build dependencies - see https://wiki.libsdl.org/SDL3/README-linux#build-dependencies for needed packages.
 - C++ v17 is a prerequisite
+- The git repos of SDL2 and SDL2_Image have to be soft-linked into the root folder.
 
 # Build instructions
 

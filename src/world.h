@@ -55,6 +55,7 @@ private:
     struct DepthPixel {
         double depth;          // squared distance from CGAL intersection
         int locationIndex;     // index of the visible location (-1 if no object)
+        double angle;          // ray angle in radians [0, 2π)
     };
 
     std::vector<World::DepthPixel> trimDepthBufferByFOV(const std::vector<World::DepthPixel>& depthBuffer) const;
