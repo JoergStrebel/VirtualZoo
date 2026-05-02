@@ -62,9 +62,11 @@ add_executable(
         organism_test
         test/organismtest_test.cpp
 )
+target_compile_definitions(organism_test PRIVATE UNIT_TEST)
 target_link_libraries(
         organism_test
         GTest::gtest_main
+        CGAL::CGAL
         simcore_lib
 )
 

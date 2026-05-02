@@ -120,7 +120,8 @@ void visualize_gui::draw(const World& myWorld)
 		
 		//draw the organism
         this->drawimage(myWorld.myOrgMan.x, myWorld.myOrgMan.y, 0, imgrepo["beetle"], myWorld.myOrgMan.get_heading());
-		
+
+		//TODO: draw the Retina outside of the world visualization part of the window
         this->updatedisplay();
 }
 
