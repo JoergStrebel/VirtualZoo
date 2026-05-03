@@ -27,15 +27,11 @@ Organism::Organism(const std::string_view id, Organism_Manager& manager)
 {
     om.register_organism(this);
 }
-
 Organism::~Organism()= default;
 
-void Organism::eat() {
-    std::cout << "Eating...";
-}
-
+// main method called by simulation loop
 void Organism::act() {
-    //check for received stimuli
+
     if (detect_collision()) {
         int addy=0;
         int addx=0;
@@ -52,7 +48,12 @@ void Organism::act() {
         } 
         om.turn_around(addx, addy);
         this->step_forward();
-    } else //just move along the old course
+    }
+    else if (1==1) //case for recognize()
+    {
+
+    }
+    else //default action: just move along the old course
     {
         this->step_forward();
     }
@@ -82,7 +83,13 @@ bool Organism::detect_collision() const {
     return !allstimuli.empty();
 }
 
-void Organism::recognize(){}
+//TODO: analyze the retina data for interesting information
+// recognize() will return one or more goals
+// each goal is then stored, prioritized and associated with a policy
+void Organism::recognize()
+{
+
+}
 
 // receiver method for the visual stimulus, which is an array of depth pixels, each containing
 // the distance to the nearest object in that direction, the color of that object and the angle
@@ -131,4 +138,9 @@ void Organism::visual_stimulus(const std::vector<DepthPixel>& depth_buffer){
         }
     }
 }
+
+void Organism::eat() {
+    std::cout << "Eating...";
+}
+
 
